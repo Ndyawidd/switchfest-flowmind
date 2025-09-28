@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react';
-import { Calendar, TrendingUp, Heart, Smile, BarChart3, Clock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Calendar, Heart, Smile, BarChart3, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface MoodEntry {
@@ -10,6 +11,7 @@ interface MoodEntry {
   mood_text: string;
   mood_emoji: string;
   description: string;
+  user_id: string;
 }
 
 const moods = [
@@ -23,6 +25,7 @@ const moods = [
 ];
 
 export default function MoodTrackerPage() {
+  const router = useRouter();
   const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
   const [selectedMood, setSelectedMood] = useState<{ emoji: string; text: string; color: string } | null>(null);
   const [newDescription, setNewDescription] = useState('');
@@ -30,16 +33,26 @@ export default function MoodTrackerPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'summary' | 'calendar'>('summary');
 
-  // Fetch data from Supabase
+  // Fetch data after login check
   useEffect(() => {
-    fetchMoodEntries();
+    checkAuthAndFetch();
   }, []);
 
-  async function fetchMoodEntries() {
+  async function checkAuthAndFetch() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    fetchMoodEntries(user.id);
+  }
+
+  async function fetchMoodEntries(userId: string) {
     try {
       const { data, error } = await supabase
         .from('mood_entries')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -58,6 +71,12 @@ export default function MoodTrackerPage() {
       return;
     }
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('mood_entries')
@@ -66,6 +85,7 @@ export default function MoodTrackerPage() {
             mood_text: selectedMood.text,
             mood_emoji: selectedMood.emoji,
             description: newDescription.trim(),
+            user_id: user.id, // 🔥 simpan user_id
           },
         ])
         .select();
@@ -88,21 +108,15 @@ export default function MoodTrackerPage() {
   // Calendar helpers
   const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   const getFirstDayOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  const getMonthName = (date: Date) => date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
   // Memoized summary
-  const { filteredEntries, moodSummary, groupedByDate } = useMemo(() => {
+  const { filteredEntries, groupedByDate } = useMemo(() => {
     let startDate = new Date();
     if (filter === 'week') startDate.setDate(startDate.getDate() - 7);
     if (filter === 'month') startDate.setMonth(startDate.getMonth() - 1);
     if (filter === 'year') startDate.setFullYear(startDate.getFullYear() - 1);
 
     const filtered = moodEntries.filter(entry => new Date(entry.created_at) >= startDate);
-
-    const summary: Record<string, number> = {};
-    filtered.forEach(entry => {
-      summary[entry.mood_text] = (summary[entry.mood_text] || 0) + 1;
-    });
 
     const grouped = new Map<string, MoodEntry[]>();
     filtered.forEach(entry => {
@@ -111,7 +125,7 @@ export default function MoodTrackerPage() {
       grouped.get(dateKey)?.push(entry);
     });
 
-    return { filteredEntries: filtered, moodSummary: summary, groupedByDate: grouped };
+    return { filteredEntries: filtered, groupedByDate: grouped };
   }, [moodEntries, filter]);
 
   const renderCalendar = () => {
@@ -164,19 +178,9 @@ export default function MoodTrackerPage() {
     return days;
   };
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      if (direction === 'prev') newDate.setMonth(newDate.getMonth() - 1);
-      if (direction === 'next') newDate.setMonth(newDate.getMonth() + 1);
-      return newDate;
-    });
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto p-6">
-        {/* ... (header + add mood form + filters sama persis seperti sebelumnya) ... */}
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -298,8 +302,6 @@ export default function MoodTrackerPage() {
         {/* Content Area */}
         {viewMode === 'summary' ? (
           <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-            {/* Mood Insights (sama seperti sebelumnya) */}
-
             {/* Recent Entries */}
             <div className="mt-8">
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -345,7 +347,6 @@ export default function MoodTrackerPage() {
           </div>
         ) : (
           <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-            {/* Calendar header + grid (sama seperti sebelumnya) */}
             <div className="grid grid-cols-7 gap-0 border border-gray-200 rounded-2xl overflow-hidden shadow-inner">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                 <div
