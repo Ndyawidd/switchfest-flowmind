@@ -4,13 +4,13 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { User } from '@supabase/supabase-js';
-import { 
-  CheckSquare, 
-  Heart, 
-  Plus, 
-  Calendar, 
-  BookOpen, 
-  TrendingUp, 
+import {
+  CheckSquare,
+  Heart,
+  Plus,
+  Calendar,
+  BookOpen,
+  TrendingUp,
   User as UserIcon,
   LogOut,
   Smile,
@@ -64,7 +64,7 @@ const Homepage = () => {
   const fetchUser = async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) {
-      router.push('/login');
+      router.push('/auth/login');
     } else {
       setUser(user);
     }
@@ -116,24 +116,41 @@ const Homepage = () => {
     if (!newTask.trim()) return;
 
     try {
+      // Ambil user yang sedang login
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error getting user:", userError.message);
+        return;
+      }
+      if (!user) {
+        console.error("No authenticated user found");
+        return;
+      }
+
       const { data, error } = await supabase
-        .from('todos')
+        .from("todos")
         .insert([
-          { task: newTask.trim(), due_date: today },
+          {
+            task: newTask.trim(),
+            due_date: today,
+            user_id: user.id, // ⬅️ WAJIB disertakan!
+          },
         ])
         .select();
 
       if (error) {
-        console.error('Error adding todo:', error.message);
+        console.error("Error adding todo:", error.message);
       } else if (data && data.length > 0) {
         setTodayTodos([data[0], ...todayTodos]);
-        setNewTask('');
+        setNewTask("");
         setShowAddTask(false);
       }
     } catch (error) {
-      console.error('Error adding todo:', error);
+      console.error("Error adding todo:", error);
     }
   };
+
+
 
   // Toggle todo completion
   const toggleTodo = async (id: number, is_completed: boolean) => {
@@ -222,46 +239,6 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
-      {/* Enhanced Navbar */}
-      <nav className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
-                  <Heart className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  FlowBite
-                </span>
-              </div>
-              <div className="hidden md:block">
-                <span className="text-gray-600 text-sm">
-                  Welcome back, <span className="font-semibold text-gray-800">{user.email?.split('@')[0]}!</span>
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Link
-                href="/notes/add"
-                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Notes</span>
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl font-medium transition-all duration-300"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Dashboard Content */}
       <main className="container mx-auto px-6 py-8">
         {/* Welcome Section */}
@@ -348,8 +325,8 @@ const Homepage = () => {
                   <Plus className="w-4 h-4" />
                   Add Task
                 </button>
-                <Link 
-                  href="/toDoList" 
+                <Link
+                  href="/toDoList"
                   className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Eye className="w-4 h-4" />
@@ -393,11 +370,10 @@ const Homepage = () => {
                 todayTodos.slice(0, 6).map(todo => (
                   <div
                     key={todo.id}
-                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 ${
-                      todo.is_completed 
-                        ? 'bg-green-50 border-green-200' 
-                        : 'bg-white border-gray-200 hover:border-blue-300'
-                    }`}
+                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 ${todo.is_completed
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-white border-gray-200 hover:border-blue-300'
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -409,18 +385,18 @@ const Homepage = () => {
                       {todo.task}
                     </span>
                     <span className="text-xs text-gray-400">
-                      {new Date(todo.created_at).toLocaleTimeString('id-ID', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {new Date(todo.created_at).toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </span>
                   </div>
                 ))
               )}
-              
+
               {todayTodos.length > 6 && (
                 <div className="text-center pt-4">
-                  <Link 
+                  <Link
                     href="/toDoList"
                     className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                   >
@@ -440,8 +416,8 @@ const Homepage = () => {
                   <Heart className="w-6 h-6 text-purple-600" />
                   <h2 className="text-xl font-bold text-gray-800">Today's Mood</h2>
                 </div>
-                <Link 
-                  href="/moodTracker" 
+                <Link
+                  href="/moodTracker"
                   className="flex items-center gap-2 text-purple-600 hover:bg-purple-50 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Eye className="w-4 h-4" />
@@ -478,18 +454,17 @@ const Homepage = () => {
                           <button
                             key={mood.text}
                             onClick={() => setSelectedMood(mood)}
-                            className={`p-3 rounded-xl transition-all ${
-                              selectedMood?.text === mood.text
-                                ? 'bg-white shadow-lg scale-105'
-                                : 'hover:bg-white hover:shadow-md'
-                            }`}
+                            className={`p-3 rounded-xl transition-all ${selectedMood?.text === mood.text
+                              ? 'bg-white shadow-lg scale-105'
+                              : 'hover:bg-white hover:shadow-md'
+                              }`}
                           >
                             <div className="text-2xl">{mood.emoji}</div>
                             <div className="text-xs mt-1">{mood.text}</div>
                           </button>
                         ))}
                       </div>
-                      
+
                       <textarea
                         value={moodDescription}
                         onChange={(e) => setMoodDescription(e.target.value)}
@@ -497,7 +472,7 @@ const Homepage = () => {
                         placeholder="How are you feeling?"
                         rows={3}
                       />
-                      
+
                       <button
                         onClick={addMoodEntry}
                         disabled={!selectedMood || !moodDescription.trim()}
@@ -518,8 +493,8 @@ const Homepage = () => {
                   <BookOpen className="w-6 h-6 text-green-600" />
                   <h2 className="text-xl font-bold text-gray-800">Recent Notes</h2>
                 </div>
-                <Link 
-                  href="/notes" 
+                <Link
+                  href="/notes"
                   className="flex items-center gap-2 text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Eye className="w-4 h-4" />
@@ -533,7 +508,7 @@ const Homepage = () => {
                   <p className="text-gray-600 text-sm">New concepts for the AI summarizer feature...</p>
                   <div className="text-xs text-gray-400 mt-2">2 hours ago</div>
                 </div>
-                
+
                 <div className="p-4 bg-green-50 rounded-xl border border-green-200">
                   <h4 className="font-semibold text-gray-800 text-sm mb-1">Meeting Notes</h4>
                   <p className="text-gray-600 text-sm">Discussion about marketing strategies...</p>
