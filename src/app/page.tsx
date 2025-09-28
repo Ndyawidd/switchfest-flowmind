@@ -19,13 +19,13 @@ const LandingPage = () => {
         </div>
         <div className="space-x-4">
           <button
-            onClick={() => handleAuthRedirect('auth/login')}
+            onClick={() => handleAuthRedirect('/auth/login')}
             className="rounded-full border border-blue-600 px-6 py-2 font-semibold text-blue-600 transition duration-300 ease-in-out hover:bg-blue-50"
           >
             Login
           </button>
           <button
-            onClick={() => handleAuthRedirect('auth/register')}
+            onClick={() => handleAuthRedirect('/auth/register')}
             className="rounded-full bg-blue-600 px-6 py-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-700"
           >
             Register
@@ -46,7 +46,7 @@ const LandingPage = () => {
               suasana hati.
             </p>
             <button
-              onClick={() => handleAuthRedirect('auth/login')}
+              onClick={() => handleAuthRedirect('/auth/login')}
               className="mt-8 rounded-full bg-blue-600 px-8 py-3 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
             >
               Mulai Sekarang
@@ -79,7 +79,7 @@ const LandingPage = () => {
                 Kelola tugas harian dan rencanakan hari Anda dengan mudah.
               </p>
               <button
-                onClick={() => handleAuthRedirect('auth/login')}
+                onClick={() => handleAuthRedirect('/auth/login')}
                 className="mt-4 text-blue-600 hover:underline focus:outline-none"
               >
                 Lihat Detail →
@@ -94,7 +94,7 @@ const LandingPage = () => {
                 Catat ide, pikiran, atau buat draf dengan fitur teks dan suara.
               </p>
               <button
-                onClick={() => handleAuthRedirect('auth/login')}
+                onClick={() => handleAuthRedirect('/auth/login')}
                 className="mt-4 text-blue-600 hover:underline focus:outline-none"
               >
                 Lihat Detail →
@@ -111,7 +111,7 @@ const LandingPage = () => {
                 Lacak suasana hati Anda dan lihat ringkasan seiring waktu.
               </p>
               <button
-                onClick={() => handleAuthRedirect('auth/login')}
+                onClick={() => handleAuthRedirect('/auth/login')}
                 className="mt-4 text-blue-600 hover:underline focus:outline-none"
               >
                 Lihat Detail →
