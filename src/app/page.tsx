@@ -15,7 +15,7 @@ const LandingPage = () => {
       <nav className="flex w-full items-center justify-between bg-white p-6 shadow-md">
         <div className="flex items-center">
           {/* Logo */}
-          <span className="text-2xl font-bold text-blue-600">FlowBite</span>
+          <span className="text-2xl font-bold text-blue-600">FlowMind</span>
         </div>
         <div className="space-x-4">
           <button
@@ -25,7 +25,7 @@ const LandingPage = () => {
             Login
           </button>
           <button
-            onClick={() => handleAuthRedirect('/register')}
+            onClick={() => handleAuthRedirect('auth/register')}
             className="rounded-full bg-blue-600 px-6 py-2 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-700"
           >
             Register
@@ -46,7 +46,7 @@ const LandingPage = () => {
               suasana hati.
             </p>
             <button
-              onClick={() => handleAuthRedirect('/login')}
+              onClick={() => handleAuthRedirect('auth/login')}
               className="mt-8 rounded-full bg-blue-600 px-8 py-3 font-semibold text-white transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
             >
               Mulai Sekarang
@@ -79,7 +79,7 @@ const LandingPage = () => {
                 Kelola tugas harian dan rencanakan hari Anda dengan mudah.
               </p>
               <button
-                onClick={() => handleAuthRedirect('/login')}
+                onClick={() => handleAuthRedirect('auth/login')}
                 className="mt-4 text-blue-600 hover:underline focus:outline-none"
               >
                 Lihat Detail →
