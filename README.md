@@ -30,8 +30,8 @@ FlowMind is a web app that helps you **track your mood, organize tasks, and reco
 1. **Clone repo**
 
    ```bash
-   git clone https://github.com/username/flowmind.git
-   cd flowmind
+   git clone https://github.com/username/switchfest-flowmind.git
+   cd switchfest-flowmind
    ```
 
 2. **Install dependencies**
