@@ -123,7 +123,7 @@ const Homepage = () => {
         <div className="col-span-1 rounded-lg bg-white p-6 shadow-md">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-800">Mood Tracker</h2>
-            <Link href="/mood" className="text-sm text-blue-600 hover:underline">
+            <Link href="/moodTracker" className="text-sm text-blue-600 hover:underline">
               View All
             </Link>
           </div>
