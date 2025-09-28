@@ -1,500 +1,274 @@
-// 'use client';
-
-// import { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-// import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-// import { Plus, FileText, Calendar, Search } from 'lucide-react';
-
-// interface Note {
-//   id: string;
-//   title: string;
-//   content: string;
-//   created_at: string;
-//   updated_at: string;
-//   user_id: string;
-// }
-
-// export default function NotesPage() {
-//   const [notes, setNotes] = useState<Note[]>([]);
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [showModal, setShowModal] = useState(false);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const router = useRouter();
-//   const supabase = createClientComponentClient();
-
-//   useEffect(() => {
-//     fetchNotes();
-//   }, []);
-
-//   const fetchNotes = async () => {
-//     try {
-//       const { data: { user } } = await supabase.auth.getUser();
-//       if (!user) {
-//         router.push('/auth/login');
-//         return;
-//       }
-
-//       const { data, error } = await supabase
-//         .from('notes')
-//         .select('*')
-//         .eq('user_id', user.id)
-//         .order('updated_at', { ascending: false });
-
-//       if (error) throw error;
-//       setNotes(data || []);
-//     } catch (error) {
-//       console.error('Error fetching notes:', error);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const handleAddNote = (method: 'text' | 'voice') => {
-//   setShowModal(false);
-//   router.push(`/notes/new?method=${method}`);
-// };
-
-// const handleNoteClick = (noteId: string) => {
-//   router.push(`/notes/edit/${noteId}`);
-// };
-
-//   const filteredNotes = notes.filter(note =>
-//     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//     note.content.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   const formatDate = (dateString: string) => {
-//     const date = new Date(dateString);
-//     return date.toLocaleDateString('id-ID', {
-//       day: 'numeric',
-//       month: 'short',
-//       year: 'numeric',
-//       hour: '2-digit',
-//       minute: '2-digit'
-//     });
-//   };
-
-//   const truncateContent = (content: string, maxLength: number = 150) => {
-//     if (content.length <= maxLength) return content;
-//     return content.substring(0, maxLength) + '...';
-//   };
-
-//   if (isLoading) {
-//     return (
-//       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-//         <div className="text-center">
-//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-//           <p className="mt-4 text-gray-600">Loading notes...</p>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       {/* Header */}
-//       <div className="bg-white shadow-sm">
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-//           <div className="flex justify-between items-center">
-//             <div>
-//               <h1 className="text-2xl font-bold text-gray-900">My Notes</h1>
-//               <p className="text-gray-600">Manage your notes and ideas</p>
-//             </div>
-//             <button
-//               onClick={() => setShowModal(true)}
-//               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-//             >
-//               <Plus size={20} />
-//               Add Note
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Search Bar */}
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-//         <div className="relative">
-//           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-//           <input
-//             type="text"
-//             placeholder="Search notes..."
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-//           />
-//         </div>
-//       </div>
-
-//       {/* Notes Grid */}
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-//         {filteredNotes.length === 0 ? (
-//           <div className="text-center py-12">
-//             <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-//             <h3 className="text-lg font-medium text-gray-900 mb-2">
-//               {searchTerm ? 'No notes found' : 'No notes yet'}
-//             </h3>
-//             <p className="text-gray-600 mb-6">
-//               {searchTerm 
-//                 ? 'Try adjusting your search terms'
-//                 : 'Start by creating your first note'
-//               }
-//             </p>
-//             {!searchTerm && (
-//               <button
-//                 onClick={() => setShowModal(true)}
-//                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-//               >
-//                 Create Note
-//               </button>
-//             )}
-//           </div>
-//         ) : (
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {filteredNotes.map((note) => (
-//               <div
-//                 key={note.id}
-//                 onClick={() => handleNoteClick(note.id)}
-//                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow"
-//               >
-//                 <div className="flex items-start justify-between mb-3">
-//                   <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-//                     {note.title || 'Untitled Note'}
-//                   </h3>
-//                   <FileText size={20} className="text-gray-400 flex-shrink-0 ml-2" />
-//                 </div>
-                
-//                 <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-//                   {truncateContent(note.content)}
-//                 </p>
-                
-//                 <div className="flex items-center text-xs text-gray-500">
-//                   <Calendar size={14} className="mr-1" />
-//                   {formatDate(note.updated_at)}
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Modal for Add Note Method Selection */}
-//       {showModal && (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-//           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-//             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-//               Create New Note
-//             </h2>
-//             <p className="text-gray-600 mb-6">
-//               Choose how you'd like to create your note:
-//             </p>
-            
-//             <div className="space-y-3">
-//               <button
-//                 onClick={() => handleAddNote('text')}
-//                 className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
-//               >
-//                 <div className="flex items-center">
-//                   <div className="bg-blue-100 p-2 rounded-lg mr-3">
-//                     <FileText size={20} className="text-blue-600" />
-//                   </div>
-//                   <div>
-//                     <h3 className="font-medium text-gray-900">Text Note</h3>
-//                     <p className="text-sm text-gray-600">Type your note manually</p>
-//                   </div>
-//                 </div>
-//               </button>
-              
-//               <button
-//                 onClick={() => handleAddNote('voice')}
-//                 className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
-//               >
-//                 <div className="flex items-center">
-//                   <div className="bg-green-100 p-2 rounded-lg mr-3">
-//                     <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-//                       <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
-//                     </svg>
-//                   </div>
-//                   <div>
-//                     <h3 className="font-medium text-gray-900">Voice Note</h3>
-//                     <p className="text-sm text-gray-600">Record and transcribe speech</p>
-//                   </div>
-//                 </div>
-//               </button>
-//             </div>
-            
-//             <div className="flex justify-end mt-6">
-//               <button
-//                 onClick={() => setShowModal(false)}
-//                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-//               >
-//                 Cancel
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-import { Plus, FileText, Calendar, Search } from 'lucide-react'
+import { useState, useEffect } from 'react';
+import { Plus, FileText, Mic, Calendar, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface Note {
-  id: string
-  title: string
-  content: string
-  created_at: string
-  updated_at: string
-  user_id: string
+  id: string;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  content: string;
+  user_id?: string;
 }
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState<Note[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [showModal, setShowModal] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const router = useRouter()
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch notes from Supabase
   useEffect(() => {
-    fetchNotes()
-  }, [])
+    fetchNotes();
+  }, []);
 
-  const fetchNotes = async () => {
+  async function fetchNotes() {
     try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser()
-
-      if (userError) throw userError
-      if (!user) {
-        router.push('/auth/login')
-        return
+      setLoading(true);
+      
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        console.log('User not logged in');
+        setNotes([]);
+        return;
       }
 
       const { data, error } = await supabase
         .from('notes')
         .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
+        .order('updated_at', { ascending: false });
 
-      if (error) throw error
-      setNotes(data || [])
+      if (error) {
+        console.error('Error fetching notes:', error.message);
+      } else {
+        setNotes(data || []);
+      }
     } catch (error) {
-      console.error('Error fetching notes:', error)
+      console.error('Error fetching notes:', error);
     } finally {
-      setIsLoading(false)
+      setLoading(false);
     }
   }
 
-  const handleAddNote = (method: 'text' | 'voice') => {
-    setShowModal(false)
-    router.push(`/notes/new?method=${method}`)
-  }
+  const filteredNotes = notes.filter(note => 
+    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleNoteClick = (noteId: string) => {
-    router.push(`/notes/edit/${noteId}`)
-  }
+  const handleAddNote = () => {
+    setShowAddModal(false);
+    // Redirect to new note page
+    window.location.href = `/notes/new`;
+  };
 
-  const filteredNotes = notes.filter(
-    (note) =>
-      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const handleEditNote = (id: string) => {
+    window.location.href = `/notes/edit/${id}`;
+  };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
+  const handleViewNote = (id: string) => {
+    window.location.href = `/notes/view/${id}`;
+  };
 
-  const truncateContent = (content: string, maxLength: number = 150) => {
-    if (content.length <= maxLength) return content
-    return content.substring(0, maxLength) + '...'
-  }
+  const handleDeleteNote = async (id: string) => {
+    if (confirm('Are you sure you want to delete this note?')) {
+      try {
+        const { error } = await supabase
+          .from('notes')
+          .delete()
+          .eq('id', id);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading notes...</p>
-        </div>
-      </div>
-    )
-  }
+        if (error) {
+          console.error('Error deleting note:', error.message);
+          alert('Failed to delete note. Please try again.');
+        } else {
+          setNotes(notes.filter(note => note.id !== id));
+        }
+      } catch (error) {
+        console.error('Error deleting note:', error);
+        alert('Failed to delete note. Please try again.');
+      }
+    }
+  };
+
+  const truncateText = (text: string, maxLength: number = 150) => {
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">My Notes</h1>
-              <p className="text-gray-600">Manage your notes and ideas</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+      <div className="container mx-auto p-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
+              <FileText className="w-8 h-8 text-white" />
             </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              My Notes
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg">Capture your thoughts and ideas</p>
+        </div>
+
+        {/* Top Bar with Search and Add Button */}
+        <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl mb-8 border border-white/20">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            {/* Search */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search notes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+              />
+            </div>
+
+            {/* Add Note Button */}
             <button
-              onClick={() => setShowModal(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              onClick={() => setShowAddModal(true)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
-              <Plus size={20} />
+              <Plus className="w-5 h-5" />
               Add Note
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Search Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search notes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
+        {/* Notes Grid */}
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading your notes...</p>
+            </div>
+          ) : filteredNotes.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-bold text-gray-700 mb-2">No notes yet</h3>
+              <p className="text-gray-500 mb-6">Start capturing your thoughts and ideas!</p>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                Create Your First Note
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredNotes.map((note) => (
+                <div
+                  key={note.id}
+                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 group"
+                >
+                  {/* Note Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                      <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                        Text Note
+                      </span>
+                    </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <button
+                        onClick={() => handleViewNote(note.id)}
+                        className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                        title="View Note"
+                      >
+                        <Eye className="w-4 h-4 text-gray-600" />
+                      </button>
+                      <button
+                        onClick={() => handleEditNote(note.id)}
+                        className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors duration-200"
+                        title="Edit Note"
+                      >
+                        <Edit className="w-4 h-4 text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteNote(note.id)}
+                        className="p-1.5 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                        title="Delete Note"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Note Content */}
+                  <div className="cursor-pointer" onClick={() => handleViewNote(note.id)}>
+                    <h3 className="font-bold text-gray-800 mb-2 text-lg leading-snug hover:text-blue-600 transition-colors">
+                      {note.title || 'Untitled Note'}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                      {truncateText(note.content)}
+                    </p>
+                  </div>
+
+                  {/* Note Footer */}
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>
+                        {new Date(note.updated_at).toLocaleDateString('id-ID', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                    <span className="text-gray-400">
+                      {note.content.length} characters
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Notes Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        {filteredNotes.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchTerm ? 'No notes found' : 'No notes yet'}
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {searchTerm
-                ? 'Try adjusting your search terms'
-                : 'Start by creating your first note'}
-            </p>
-            {!searchTerm && (
-              <button
-                onClick={() => setShowModal(true)}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Create Note
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNotes.map((note) => (
-              <div
-                key={note.id}
-                onClick={() => handleNoteClick(note.id)}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                    {note.title || 'Untitled Note'}
-                  </h3>
-                  <FileText
-                    size={20}
-                    className="text-gray-400 flex-shrink-0 ml-2"
-                  />
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {truncateContent(note.content)}
-                </p>
-
-                <div className="flex items-center text-xs text-gray-500">
-                  <Calendar size={14} className="mr-1" />
-                  {formatDate(note.updated_at)}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Modal for Add Note Method Selection */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Create New Note
+      {/* Add Note Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform animate-in zoom-in-95 duration-300">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              Ready to create a new note?
             </h2>
-            <p className="text-gray-600 mb-6">
-              Choose how you'd like to create your note:
-            </p>
-
-            <div className="space-y-3">
+            
+            <div className="space-y-4">
+              {/* Create Note Button */}
               <button
-                onClick={() => handleAddNote('text')}
-                className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                onClick={handleAddNote}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white p-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                <div className="flex items-center">
-                  <div className="bg-blue-100 p-2 rounded-lg mr-3">
-                    <FileText size={20} className="text-blue-600" />
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white/20 rounded-full">
+                    <FileText className="w-6 h-6" />
                   </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">Text Note</h3>
-                    <p className="text-sm text-gray-600">
-                      Type your note manually
-                    </p>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleAddNote('voice')}
-                className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
-              >
-                <div className="flex items-center">
-                  <div className="bg-green-100 p-2 rounded-lg mr-3">
-                    <svg
-                      className="w-5 h-5 text-green-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">Voice Note</h3>
-                    <p className="text-sm text-gray-600">
-                      Record and transcribe speech
-                    </p>
+                  <div className="text-left">
+                    <h3 className="font-bold text-lg">Create New Note</h3>
+                    <p className="text-blue-100 text-sm">Write with keyboard or use voice input</p>
                   </div>
                 </div>
               </button>
             </div>
 
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="w-full mt-6 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl transition-all duration-300"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
