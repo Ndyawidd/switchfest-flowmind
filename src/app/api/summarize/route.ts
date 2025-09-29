@@ -1,3 +1,4 @@
+// src/app/api/summarize/route.ts
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -12,37 +13,45 @@ export async function POST(req: Request) {
     
     if (cleanedText.length < 100) {
       return NextResponse.json({ 
-        summary: "Teks terlalu pendek untuk diringkas." 
+        summary: "Teks terlalu pendek untuk diringkas. Minimal 100 karakter diperlukan." 
       });
     }
 
-    const geminiApiKey = process.env.GEMINI_API_KEY;
+    // Check API key
+    const geminiApiKey = process.env.GEMINI_API_TOKEN;
 
     if (!geminiApiKey) {
+      console.error('GEMINI_API_TOKEN not found in environment variables');
       return NextResponse.json({ 
-        error: 'Gemini API key not configured.' 
+        error: 'Gemini API key not configured. Please set GEMINI_API_TOKEN in .env.local file.' 
       }, { status: 500 });
     }
 
-    // Gemini bisa handle text yang lebih panjang
-    const maxLength = 12000;
+    // Gemini 2.5 Flash dapat handle text yang sangat panjang (1M tokens)
+    const maxLength = 50000; // Lebih besar karena model lebih powerful
     const inputText = cleanedText.length > maxLength 
       ? cleanedText.substring(0, maxLength) + "..."
       : cleanedText;
 
     const prompt = `Buatlah ringkasan yang padat dan informatif dari teks berikut dalam bahasa Indonesia. 
 Ringkasan harus:
-- Terdiri dari 2-4 kalimat
-- Mencakup poin-poin utama
+- Terdiri dari 3-5 paragraf
+- Mencakup semua poin-poin utama
 - Jelas dan mudah dipahami
-- Dalam bahasa Indonesia
+- Dalam bahasa Indonesia yang baik dan benar
 
 Teks yang akan diringkas:
 ${inputText}
 
 Ringkasan:`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+    console.log('Sending request to Gemini API...');
+    console.log('Text length:', inputText.length);
+
+    // Use Gemini 2.5 Flash - Latest and fastest model
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`;
+
+    const response = await fetch(geminiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,10 +63,10 @@ Ringkasan:`;
           }]
         }],
         generationConfig: {
-          temperature: 0.3,
+          temperature: 0.4,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 300,
+          maxOutputTokens: 2048, // Naikkan dari 1000 ke 2048
         },
         safetySettings: [
           {
@@ -67,25 +76,41 @@ Ringkasan:`;
           {
             category: "HARM_CATEGORY_HATE_SPEECH",
             threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
           }
         ]
       })
     });
 
+    console.log('Gemini API response status:', response.status);
+
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
       console.error('Gemini API Error:', errorData);
       
       if (response.status === 400) {
         return NextResponse.json({ 
-          error: 'Invalid request to Gemini API. Please check your API key.' 
+          error: 'Invalid request to Gemini API. Please check your API key and try again.' 
         }, { status: 400 });
       }
       
       if (response.status === 429) {
         return NextResponse.json({ 
-          error: 'Rate limit exceeded. Please try again later.' 
+          error: 'Rate limit exceeded. Please try again in a few moments.' 
         }, { status: 429 });
+      }
+
+      if (response.status === 403) {
+        return NextResponse.json({ 
+          error: 'API key is invalid or not authorized. Please check your GEMINI_API_TOKEN.' 
+        }, { status: 403 });
       }
       
       return NextResponse.json({ 
@@ -94,14 +119,50 @@ Ringkasan:`;
     }
 
     const result = await response.json();
-    const summary = result.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    console.log('Gemini API response:', JSON.stringify(result, null, 2));
+
+    // Check finish reason first
+    const candidate = result.candidates?.[0];
+    const finishReason = candidate?.finishReason;
+
+    console.log('Finish reason:', finishReason);
+
+    // Handle MAX_TOKENS - return partial result
+    if (finishReason === 'MAX_TOKENS') {
+      const partialSummary = candidate?.content?.parts?.[0]?.text?.trim();
+      if (partialSummary) {
+        console.log('Partial summary due to MAX_TOKENS, length:', partialSummary.length);
+        return NextResponse.json({ 
+          summary: partialSummary + '\n\n[Catatan: Ringkasan mungkin terpotong karena teks sangat panjang. Coba dengan teks yang lebih pendek untuk hasil optimal.]',
+          metadata: {
+            originalLength: cleanedText.length,
+            summaryLength: partialSummary.length,
+            truncated: true,
+            provider: 'Google Gemini 2.5 Flash',
+            warning: 'Output truncated due to token limit'
+          }
+        });
+      }
+    }
+
+    const summary = candidate?.content?.parts?.[0]?.text?.trim();
 
     if (!summary) {
-      console.error('Unexpected Gemini response:', result);
+      console.error('No summary text in response:', result);
+      
+      // Check if content was blocked
+      if (result.candidates?.[0]?.finishReason === 'SAFETY') {
+        return NextResponse.json({ 
+          error: 'Content was blocked by safety filters. Please try with different text.' 
+        }, { status: 400 });
+      }
+
       return NextResponse.json({ 
-        error: 'Failed to generate summary from Gemini.' 
+        error: 'Failed to generate summary. The API returned an unexpected response.' 
       }, { status: 500 });
     }
+
+    console.log('Summary generated successfully, length:', summary.length);
 
     return NextResponse.json({ 
       summary,
@@ -109,150 +170,16 @@ Ringkasan:`;
         originalLength: cleanedText.length,
         summaryLength: summary.length,
         truncated: cleanedText.length > maxLength,
-        provider: 'Google Gemini (Free)'
+        provider: 'Google Gemini 2.5 Flash'
       }
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error summarizing text:', error);
+    console.error('Error stack:', error.stack);
+    
     return NextResponse.json({ 
-      error: 'Internal server error while processing summary.' 
+      error: `Internal server error: ${error.message}` 
     }, { status: 500 });
   }
 }
-
-
-
-// import { NextResponse } from 'next/server';
-
-// export async function POST(req: Request) {
-//   try {
-//     const { text } = await req.json();
-
-//     if (!text || text.trim().length === 0) {
-//       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
-//     }
-
-//     const cleanedText = text.trim();
-    
-//     if (cleanedText.length < 100) {
-//       return NextResponse.json({ 
-//         summary: "Teks terlalu pendek untuk diringkas." 
-//       });
-//     }
-
-//     const huggingFaceToken = process.env.HUGGING_FACE_API_TOKEN;
-
-//     if (!huggingFaceToken) {
-//       return NextResponse.json({ 
-//         error: 'Hugging Face API token not configured.' 
-//       }, { status: 500 });
-//     }
-
-//     // Coba beberapa model secara berurutan jika yang pertama gagal
-//     const models = [
-//       "facebook/bart-large-cnn",           // Bagus untuk summarization umum
-//       "sshleifer/distilbart-xsum-12-6",    // Lebih cepat, hasil bagus
-//       "microsoft/DialoGPT-medium",         // Fallback
-//       "cahya/bert2bert-indonesian-summarization" // Khusus Indonesia (jika tersedia)
-//     ];
-
-//     let summary = null;
-//     let usedModel = null;
-
-//     // Batasi panjang input
-//     const maxLength = 2500;
-//     const inputText = cleanedText.length > maxLength 
-//       ? cleanedText.substring(0, maxLength) + "..."
-//       : cleanedText;
-
-//     for (const model of models) {
-//       try {
-//         console.log(`Trying model: ${model}`);
-        
-//         const response = await fetch(
-//           `https://api-inference.huggingface.co/models/${model}`,
-//           {
-//             headers: {
-//               'Authorization': `Bearer ${huggingFaceToken}`,
-//               'Content-Type': 'application/json',
-//             },
-//             method: 'POST',
-//             body: JSON.stringify({ 
-//               inputs: inputText,
-//               parameters: {
-//                 max_length: 150,
-//                 min_length: 30,
-//                 do_sample: false,
-//                 early_stopping: true
-//               },
-//               options: {
-//                 wait_for_model: true // Wait jika model sedang loading
-//               }
-//             }),
-//           }
-//         );
-
-//         if (response.ok) {
-//           const result = await response.json();
-          
-//           // Handle different response formats
-//           if (Array.isArray(result) && result[0]?.summary_text) {
-//             summary = result[0].summary_text.trim();
-//             usedModel = model;
-//             break;
-//           } else if (result.summary_text) {
-//             summary = result.summary_text.trim();
-//             usedModel = model;
-//             break;
-//           } else if (Array.isArray(result) && result[0]?.generated_text) {
-//             summary = result[0].generated_text.trim();
-//             usedModel = model;
-//             break;
-//           }
-//         } else {
-//           const errorData = await response.json();
-//           console.log(`Model ${model} failed:`, errorData);
-          
-//           // Jika model sedang loading, tunggu sebentar
-//           if (response.status === 503) {
-//             await new Promise(resolve => setTimeout(resolve, 2000));
-//           }
-          
-//           continue; // Try next model
-//         }
-//       } catch (error) {
-//         console.log(`Model ${model} error:`, error);
-//         continue; // Try next model
-//       }
-//     }
-
-//     if (!summary) {
-//       return NextResponse.json({ 
-//         error: 'All summarization models failed. Please try again later.' 
-//       }, { status: 500 });
-//     }
-
-//     // Clean up summary
-//     summary = summary
-//       .replace(/^(Summary:|Ringkasan:|TL;DR:)/i, '') // Remove prefixes
-//       .trim();
-
-//     return NextResponse.json({ 
-//       summary,
-//       metadata: {
-//         originalLength: cleanedText.length,
-//         summaryLength: summary.length,
-//         truncated: cleanedText.length > maxLength,
-//         provider: `Hugging Face (${usedModel})`,
-//         modelUsed: usedModel
-//       }
-//     });
-
-//   } catch (error) {
-//     console.error('Error summarizing text:', error);
-//     return NextResponse.json({ 
-//       error: 'Internal server error while processing summary.' 
-//     }, { status: 500 });
-//   }
-// }
