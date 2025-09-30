@@ -224,7 +224,7 @@ export default function NewNotePage() {
         alert('Failed to save note. Please try again.');
       } else {
         alert('Note saved successfully!');
-        window.location.href = '/notes';
+        window.location.href = '/dashboard/notes';
       }
     } catch (error) {
       console.error('Error saving note:', error);
@@ -237,10 +237,10 @@ export default function NewNotePage() {
   const goBack = () => {
     if (content.trim() || title.trim()) {
       if (confirm('You have unsaved changes. Are you sure you want to go back?')) {
-        window.location.href = '/notes';
+        window.location.href = '/dashboard/notes';
       }
     } else {
-      window.location.href = '/notes';
+      window.location.href = '/dashboard/notes';
     }
   };
 
@@ -253,7 +253,7 @@ export default function NewNotePage() {
   }, [content]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100">
       <div className="container mx-auto p-6 max-w-4xl">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl mb-6 border border-white/20">
@@ -310,18 +310,18 @@ export default function NewNotePage() {
           {/* Audio Player (if voice recorded) */}
           {audioUrl && (
             <div className="px-6 pb-4">
-              <div className="bg-purple-50 p-4 rounded-2xl border border-purple-200">
+              <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-purple-800 flex items-center gap-2">
+                  <h3 className="font-semibold text-blue-800 flex items-center gap-2">
                     <Volume2 className="w-4 h-4" />
                     Voice Input Preview
                   </h3>
                   <button
                     onClick={clearRecording}
-                    className="p-2 hover:bg-purple-200 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-200 rounded-xl transition-colors"
                     title="Clear Recording"
                   >
-                    <Trash2 className="w-4 h-4 text-purple-600" />
+                    <Trash2 className="w-4 h-4 text-blue-600" />
                   </button>
                 </div>
                 <audio
@@ -330,7 +330,7 @@ export default function NewNotePage() {
                   controls
                   className="w-full"
                 />
-                <p className="text-sm text-purple-700 mt-2">
+                <p className="text-sm text-blue-700 mt-2">
                   This audio is converted to text and added to your note content above.
                 </p>
               </div>
@@ -351,7 +351,7 @@ export default function NewNotePage() {
                         ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                         : isProcessing
                         ? 'bg-yellow-500 animate-pulse cursor-not-allowed'
-                        : 'bg-purple-500 hover:bg-purple-600'
+                        : 'bg-blue-500 hover:bg-blue-600'
                     } text-white`}
                   >
                     {isProcessing ? (
@@ -383,7 +383,7 @@ export default function NewNotePage() {
               <button
                 onClick={saveNote}
                 disabled={saving || (!title.trim() && !content.trim())}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
+                className="bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -398,17 +398,6 @@ export default function NewNotePage() {
                 )}
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* Tips Section */}
-        <div className="mt-6 bg-white/60 backdrop-blur-sm p-6 rounded-3xl shadow-lg border border-white/20">
-          <h3 className="font-semibold text-gray-800 mb-3">💡 Tips:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-            <div>• Speak clearly and at a normal pace</div>
-            <div>• Use punctuation words like "period", "comma"</div>
-            <div>• Say "new line" or "new paragraph" for breaks</div>
-            <div>• You can edit the transcribed text manually</div>
           </div>
         </div>
       </div>

@@ -2,18 +2,18 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  Calendar, 
-  CheckSquare, 
-  Plus, 
-  Clock, 
-  Target, 
-  ChevronLeft, 
-  ChevronRight, 
-  Filter, 
-  Trash2, 
-  Edit3, 
-  Save, 
+import {
+  Calendar,
+  CheckSquare,
+  Plus,
+  Clock,
+  Target,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Trash2,
+  Edit3,
+  Save,
   X,
   ArrowLeft
 } from 'lucide-react';
@@ -54,7 +54,7 @@ export default function ToDoListPage() {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {
-        router.push('/login');
+        router.push('auth/login');
         return;
       }
       setUserId(user.id);
@@ -110,13 +110,13 @@ export default function ToDoListPage() {
 
   async function addTodo() {
     if (!newTask.trim() || !userId) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('todos')
-        .insert([{ 
-          task: newTask.trim(), 
-          due_date: selectedDate, 
+        .insert([{
+          task: newTask.trim(),
+          due_date: selectedDate,
           user_id: userId,
           is_completed: false
         }])
@@ -157,7 +157,7 @@ export default function ToDoListPage() {
 
   async function deleteTodo(id: number) {
     if (!confirm('Are you sure you want to delete this task?')) return;
-    
+
     try {
       const { error } = await supabase
         .from('todos')
@@ -178,7 +178,7 @@ export default function ToDoListPage() {
 
   async function updateTodo(id: number, newText: string) {
     if (!newText.trim() || !userId) return;
-    
+
     try {
       const { error } = await supabase
         .from('todos')
@@ -278,49 +278,45 @@ export default function ToDoListPage() {
       const dayTodos = todosByDate.get(dateKey) || [];
       const isToday = dateKey === today;
       const isSelected = dateKey === selectedDate;
-      
+
       const completedCount = dayTodos.filter(todo => todo.is_completed).length;
       const totalCount = dayTodos.length;
 
       days.push(
         <div
           key={day}
-          className={`h-28 border border-gray-100 p-2 cursor-pointer hover:bg-gray-50 transition-colors relative ${
-            isToday ? 'bg-blue-50 border-blue-300' : ''
-          } ${isSelected ? 'bg-purple-50 border-purple-300' : ''}`}
+          className={`h-28 border border-gray-100 p-2 cursor-pointer hover:bg-gray-50 transition-colors relative ${isToday ? 'bg-blue-50 border-blue-300' : ''
+            } ${isSelected ? 'bg-purple-50 border-purple-300' : ''}`}
           onClick={() => setSelectedDate(dateKey)}
         >
-          <div className={`text-sm font-medium mb-1 ${
-            isToday ? 'text-blue-600' : isSelected ? 'text-purple-600' : 'text-gray-700'
-          }`}>
+          <div className={`text-sm font-medium mb-1 ${isToday ? 'text-blue-600' : isSelected ? 'text-purple-600' : 'text-gray-700'
+            }`}>
             {day}
           </div>
-          
+
           {totalCount > 0 && (
             <div className="space-y-1">
-              <div className={`text-xs px-2 py-1 rounded-full flex items-center justify-between ${
-                completedCount === totalCount 
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-orange-100 text-orange-700'
-              }`}>
+              <div className={`text-xs px-2 py-1 rounded-full flex items-center justify-between ${completedCount === totalCount
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-blue-100 text-blue-700'
+                }`}>
                 <span>{completedCount}/{totalCount}</span>
                 {completedCount === totalCount && <CheckSquare className="w-3 h-3" />}
               </div>
-              
+
               {dayTodos.slice(0, 2).map((todo, idx) => (
                 <div
                   key={idx}
-                  className={`text-xs p-1 rounded truncate ${
-                    todo.is_completed 
-                      ? 'bg-green-100 text-green-700 line-through'
+                  className={`text-xs p-1 rounded truncate ${todo.is_completed
+                      ? 'bg-blue-100 text-blue-700 line-through'
                       : 'bg-gray-100 text-gray-700'
-                  }`}
+                    }`}
                   title={todo.task}
                 >
                   {todo.task}
                 </div>
               ))}
-              
+
               {dayTodos.length > 2 && (
                 <div className="text-xs text-gray-500">+{dayTodos.length - 2} more</div>
               )}
@@ -345,13 +341,13 @@ export default function ToDoListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+   <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
       <div className="container mx-auto p-6">
         {/* Header */}
-        <div className="text-center mb-8">
+        {/* <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <button
-              onClick={() => router.push('/homepage')}
+              onClick={() => router.push('dashboard/homepage')}
               className="absolute left-6 top-6 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -364,6 +360,18 @@ export default function ToDoListPage() {
             </h1>
           </div>
           <p className="text-gray-600 text-lg">Organize your tasks, achieve your goals</p>
+        </div> */}
+
+        <div className="my-8">
+          {/* Header */}
+          <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center">
+            <span className="text-blue-600">To</span>{' '}
+            <span className="text-gray-900">Do</span>{' '}
+            <span className="text-blue-600">List</span>
+          </h1>
+          <h2 className="text-xl md:text-xl font-semibold text-gray-800 mt-4 font-montserrat text-center">
+            Organize your tasks, achieve your goals
+          </h2>
         </div>
 
         {/* Stats Cards */}
@@ -379,27 +387,27 @@ export default function ToDoListPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckSquare className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <CheckSquare className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Completed</p>
-                <p className="text-2xl font-bold text-green-600">{completedToday}</p>
+                <p className="text-2xl font-bold text-blue-600">{completedToday}</p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="w-5 h-5 text-orange-600" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Clock className="w-5 h-5 text-blue-600" />
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Remaining</p>
-                <p className="text-2xl font-bold text-orange-600">{totalToday - completedToday}</p>
+                <p className="text-2xl font-bold text-blue-600">{totalToday - completedToday}</p>
               </div>
             </div>
           </div>
@@ -412,22 +420,20 @@ export default function ToDoListPage() {
               <div className="flex bg-gray-100 rounded-2xl p-1">
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${
-                    viewMode === 'list' 
-                      ? 'bg-white shadow-md text-blue-600' 
+                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'list'
+                      ? 'bg-white shadow-md text-blue-600'
                       : 'text-gray-600 hover:text-blue-600'
-                  }`}
+                    }`}
                 >
                   <CheckSquare className="w-4 h-4" />
                   List View
                 </button>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${
-                    viewMode === 'calendar' 
-                      ? 'bg-white shadow-md text-blue-600' 
-                      : 'text-gray-600 hover:text-blue-600'
-                  }`}
+                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'calendar'
+                      ? 'bg-white shadow-md text-blue-600'
+                      : 'text-gray-900 hover:text-blue-600'
+                    }`}
                 >
                   <Calendar className="w-4 h-4" />
                   Calendar
@@ -440,16 +446,16 @@ export default function ToDoListPage() {
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-white border border-gray-200 rounded-xl px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="bg-white border border-gray-200 rounded-xl px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-700"
               />
-              
+
               {viewMode === 'list' && (
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-gray-600" />
+                  <Filter className="w-4 h-4 text-gray-900" />
                   <select
                     value={filter}
                     onChange={(e) => setFilter(e.target.value as 'all' | 'pending' | 'completed')}
-                    className="bg-white border border-gray-200 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="bg-white border border-gray-200 rounded-xl px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-gray-900"
                   >
                     <option value="all">All Tasks</option>
                     <option value="pending">Pending</option>
@@ -479,7 +485,7 @@ export default function ToDoListPage() {
                   value={newTask}
                   onChange={(e) => setNewTask(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-                  className="w-full p-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                  className="w-full p-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-gray-700"
                   placeholder="What needs to be done?"
                 />
               </div>
@@ -498,14 +504,14 @@ export default function ToDoListPage() {
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📝</div>
                 <p className="text-gray-500 text-lg">
-                  {filter === 'all' ? 'No tasks for this day' : 
-                   filter === 'pending' ? 'No pending tasks' : 
-                   'No completed tasks'}
+                  {filter === 'all' ? 'No tasks for this day' :
+                    filter === 'pending' ? 'No pending tasks' :
+                      'No completed tasks'}
                 </p>
                 <p className="text-gray-400">
-                  {filter === 'all' ? 'Add your first task to get started!' : 
-                   filter === 'pending' ? 'Great job! All tasks are completed.' : 
-                   'Complete some tasks to see them here.'}
+                  {filter === 'all' ? 'Add your first task to get started!' :
+                    filter === 'pending' ? 'Great job! All tasks are completed.' :
+                      'Complete some tasks to see them here.'}
                 </p>
               </div>
             ) : (
@@ -513,11 +519,10 @@ export default function ToDoListPage() {
                 {filteredTodos.map(todo => (
                   <div
                     key={todo.id}
-                    className={`group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 hover:shadow-lg ${
-                      todo.is_completed 
-                        ? 'bg-green-50 border-green-200 hover:bg-green-100'
+                    className={`group flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 hover:shadow-lg ${todo.is_completed
+                        ? 'bg-blue-50 border-blue-200 hover:bg-blue-100'
                         : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-md'
-                    }`}
+                      }`}
                   >
                     <input
                       type="checkbox"
@@ -525,7 +530,7 @@ export default function ToDoListPage() {
                       onChange={() => toggleTodoCompletion(todo.id, todo.is_completed)}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
                     />
-                    
+
                     <div className="flex-1">
                       {editingId === todo.id ? (
                         <div className="flex gap-2">
@@ -553,7 +558,7 @@ export default function ToDoListPage() {
                         <>
                           <button
                             onClick={() => updateTodo(todo.id, editText)}
-                            className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
                             title="Save"
                           >
                             <Save className="w-4 h-4" />
@@ -625,7 +630,7 @@ export default function ToDoListPage() {
                   {day}
                 </div>
               ))}
-              
+
               {/* Calendar days */}
               {renderCalendar()}
             </div>
@@ -638,11 +643,11 @@ export default function ToDoListPage() {
               </div>
               <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-green-100 rounded"></div>
+                  <div className="w-4 h-4 bg-blue-100 rounded"></div>
                   <span>All tasks completed</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-orange-100 rounded"></div>
+                  <div className="w-4 h-4 bg-blue-100 rounded"></div>
                   <span>Tasks pending</span>
                 </div>
                 <div className="flex items-center gap-2">

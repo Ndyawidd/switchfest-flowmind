@@ -146,9 +146,8 @@ export default function MoodTrackerPage() {
       days.push(
         <div
           key={day}
-          className={`h-24 border border-gray-100 p-1 relative overflow-hidden hover:bg-gray-50 transition-colors ${
-            isToday ? 'bg-blue-50 border-blue-300' : ''
-          }`}
+          className={`h-24 border border-gray-100 p-1 relative overflow-hidden hover:bg-gray-50 transition-colors ${isToday ? 'bg-blue-50 border-blue-300' : ''
+            }`}
         >
           <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>{day}</div>
           <div className="mt-1 space-y-1">
@@ -164,7 +163,7 @@ export default function MoodTrackerPage() {
                 }
               >
                 <span className="text-xs">{entry.mood_emoji}</span>
-                <span className="truncate group-hover:text-purple-600 transition-colors">{entry.mood_text}</span>
+                <span className="text-gray-500 truncate group-hover:text-purple-600 transition-colors">{entry.mood_text}</span>
               </div>
             ))}
             {dayEntries.length > 2 && (
@@ -179,44 +178,39 @@ export default function MoodTrackerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
       <div className="container mx-auto p-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-purple-500 to-blue-600 rounded-full">
-              <Heart className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              FlowMind
-            </h1>
-          </div>
-          <p className="text-gray-600 text-lg">Track your emotions, understand your patterns</p>
+
+        <div className="my-8">
+          {/* Header */}
+          <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center mb-10">
+            <span className="text-blue-600">Mood</span>{' '}
+            <span className="text-gray-900">Tracker</span>
+          </h1>
+
         </div>
 
         {/* Add Mood Section */}
         <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl mb-8 border border-white/20">
           <div className="flex items-center gap-2 mb-6">
-            <Smile className="w-6 h-6 text-purple-600" />
+            <Smile className="w-6 h-6 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-800">How are you feeling today?</h2>
           </div>
-          
+
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-6">
             {moods.map((mood) => (
               <button
                 key={mood.text}
                 onClick={() => setSelectedMood(mood)}
-                className={`group relative overflow-hidden p-4 rounded-2xl transition-all duration-300 transform hover:scale-105 ${
-                  selectedMood?.text === mood.text
+                className={`group relative overflow-hidden p-4 rounded-2xl transition-all duration-300 transform hover:scale-105 ${selectedMood?.text === mood.text
                     ? `bg-gradient-to-br ${mood.color} shadow-2xl scale-105`
                     : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl'
-                }`}
+                  }`}
               >
                 <div className="text-center">
                   <div className="text-3xl mb-2 group-hover:animate-bounce">{mood.emoji}</div>
-                  <div className={`text-sm font-medium transition-colors ${
-                    selectedMood?.text === mood.text ? 'text-white' : 'text-gray-700'
-                  }`}>
+                  <div className={`text-sm font-medium transition-colors ${selectedMood?.text === mood.text ? 'text-white' : 'text-gray-700'
+                    }`}>
                     {mood.text}
                   </div>
                 </div>
@@ -234,7 +228,7 @@ export default function MoodTrackerPage() {
             <textarea
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              className="w-full p-4 rounded-2xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-300 resize-none"
+              className="text-gray-700 w-full p-4 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 resize-none"
               placeholder="What made you feel this way? Share your thoughts..."
               rows={4}
             />
@@ -243,7 +237,7 @@ export default function MoodTrackerPage() {
           <button
             onClick={addMoodEntry}
             disabled={!selectedMood || !newDescription.trim()}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
           >
             <div className="flex items-center justify-center gap-2">
               <Heart className="w-5 h-5" />
@@ -259,22 +253,20 @@ export default function MoodTrackerPage() {
               <div className="flex bg-gray-100 rounded-2xl p-1">
                 <button
                   onClick={() => setViewMode('summary')}
-                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${
-                    viewMode === 'summary' 
-                      ? 'bg-white shadow-md text-purple-600' 
-                      : 'text-gray-600 hover:text-purple-600'
-                  }`}
+                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'summary'
+                      ? 'bg-white shadow-md text-blue-600'
+                      : 'text-gray-600 hover:text-blue-600'
+                    }`}
                 >
                   <BarChart3 className="w-4 h-4" />
                   Summary
                 </button>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${
-                    viewMode === 'calendar' 
-                      ? 'bg-white shadow-md text-purple-600' 
-                      : 'text-gray-600 hover:text-purple-600'
-                  }`}
+                  className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'calendar'
+                      ? 'bg-white shadow-md text-blue-600'
+                      : 'text-gray-600 hover:text-blue-600'
+                    }`}
                 >
                   <Calendar className="w-4 h-4" />
                   Calendar
@@ -288,7 +280,7 @@ export default function MoodTrackerPage() {
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value as 'week' | 'month' | 'year')}
-                  className="bg-white border border-gray-200 rounded-xl px-4 py-2 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+                  className="bg-white border border-gray-200 rounded-xl px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                 >
                   <option value="week">Last Week</option>
                   <option value="month">Last Month</option>
@@ -305,7 +297,7 @@ export default function MoodTrackerPage() {
             {/* Recent Entries */}
             <div className="mt-8">
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-600" />
+                <Clock className="w-5 h-5 text-blue-600" />
                 Recent Entries
               </h3>
               {filteredEntries.length === 0 ? (

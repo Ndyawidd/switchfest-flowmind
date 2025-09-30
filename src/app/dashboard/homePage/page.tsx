@@ -238,75 +238,87 @@ const Homepage = () => {
   const totalTodos = todayTodos.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
-      {/* Dashboard Content */}
-      <main className="container mx-auto px-6 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 17 ? 'Afternoon' : 'Evening'}! 👋
-          </h1>
-          <p className="text-gray-600">Here's what's happening with your productivity today</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+  {/* Dashboard Content */}
+  <main className="container mx-auto px-6 py-8">
+    {/* Welcome Section */}
+    <div className="my-8">
+      <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center">
+        <span className="text-blue-600">Good</span>{' '}
+        <span className="text-gray-900">
+          {new Date().getHours() < 12
+            ? 'Morning'
+            : new Date().getHours() < 17
+            ? 'Afternoon'
+            : 'Evening'}!
+        </span>
+      </h1>
+      <h2 className="text-xl md:text-xl font-semibold text-gray-900 mt-4 text-center font-montserrat">
+        Here's what's happening with your productivity today
+      </h2>
+    </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Today's Tasks</p>
-                <p className="text-2xl font-bold text-gray-800">{totalTodos}</p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <CheckSquare className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
+    {/* Stats Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-10">
+      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-blue-600 text-sm">Today's Tasks</p>
+            <p className="text-2xl font-bold text-blue-900">{totalTodos}</p>
           </div>
-
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Completed</p>
-                <p className="text-2xl font-bold text-green-600">{completedTodos}</p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-xl">
-                <Target className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Progress</p>
-                <p className="text-2xl font-bold text-indigo-600">
-                  {totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0}%
-                </p>
-              </div>
-              <div className="p-3 bg-indigo-100 rounded-xl">
-                <TrendingUp className="w-6 h-6 text-indigo-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/20">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Today's Mood</p>
-                <p className="text-lg font-semibold text-gray-800">
-                  {todayMood ? todayMood.mood_text : 'Not set'}
-                </p>
-              </div>
-              <div className="p-3 bg-purple-100 rounded-xl">
-                {todayMood ? (
-                  <span className="text-2xl">{todayMood.mood_emoji}</span>
-                ) : (
-                  <Smile className="w-6 h-6 text-purple-600" />
-                )}
-              </div>
-            </div>
+          <div className="p-3 bg-blue-100 rounded-xl">
+            <CheckSquare className="w-6 h-6 text-blue-600" />
           </div>
         </div>
+      </div>
+
+      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-blue-600 text-sm">Completed</p>
+            <p className="text-2xl font-bold text-blue-900">{completedTodos}</p>
+          </div>
+          <div className="p-3 bg-blue-100 rounded-xl">
+            <Target className="w-6 h-6 text-blue-600" />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-blue-600 text-sm">Progress</p>
+            <p className="text-2xl font-bold text-blue-900">
+              {totalTodos > 0
+                ? Math.round((completedTodos / totalTodos) * 100)
+                : 0}%
+            </p>
+          </div>
+          <div className="p-3 bg-blue-100 rounded-xl">
+            <TrendingUp className="w-6 h-6 text-blue-600" />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-blue-600 text-sm">Today's Mood</p>
+            <p className="text-lg font-semibold text-blue-900">
+              {todayMood ? todayMood.mood_text : 'Not set'}
+            </p>
+          </div>
+          <div className="p-3 bg-blue-100 rounded-xl">
+            {todayMood ? (
+              <span className="text-2xl">{todayMood.mood_emoji}</span>
+            ) : (
+              <Smile className="w-6 h-6 text-blue-600" />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
 
         {/* Main Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -344,13 +356,13 @@ const Homepage = () => {
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-                    className="flex-1 p-3 rounded-xl border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    className="text-gray-700  flex-1 p-3 rounded-xl border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                     placeholder="What needs to be done today?"
                   />
                   <button
                     onClick={addTodo}
                     disabled={!newTask.trim()}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl transition-colors disabled:cursor-not-allowed"
+                    className="text-gray-700 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl transition-colors disabled:cursor-not-allowed"
                   >
                     Add
                   </button>
@@ -371,7 +383,7 @@ const Homepage = () => {
                   <div
                     key={todo.id}
                     className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 ${todo.is_completed
-                      ? 'bg-green-50 border-green-200'
+                      ? 'bg-blue-50 border-blue-200'
                       : 'bg-white border-gray-200 hover:border-blue-300'
                       }`}
                   >
@@ -413,12 +425,12 @@ const Homepage = () => {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Heart className="w-6 h-6 text-purple-600" />
+                  <Heart className="w-6 h-6 text-blue-600" />
                   <h2 className="text-xl font-bold text-gray-800">Today's Mood</h2>
                 </div>
                 <Link
                   href="/moodTracker"
-                  className="flex items-center gap-2 text-purple-600 hover:bg-purple-50 px-3 py-2 rounded-xl transition-colors"
+                  className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Eye className="w-4 h-4" />
                   View All
@@ -441,14 +453,14 @@ const Homepage = () => {
                 <div className="text-center">
                   <button
                     onClick={() => setShowAddMood(!showAddMood)}
-                    className="w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-colors group"
+                    className="w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-colors group"
                   >
-                    <Smile className="w-8 h-8 text-gray-400 group-hover:text-purple-500 mx-auto mb-2" />
-                    <p className="text-gray-500 group-hover:text-purple-600">Track your mood today</p>
+                    <Smile className="w-8 h-8 text-gray-400 group-hover:text-blue-500 mx-auto mb-2" />
+                    <p className="text-gray-500 group-hover:text-blue-600">Track your mood today</p>
                   </button>
 
                   {showAddMood && (
-                    <div className="mt-4 p-4 bg-purple-50 rounded-2xl border border-purple-200">
+                    <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-200">
                       <div className="grid grid-cols-4 gap-2 mb-4">
                         {moods.slice(0, 4).map((mood) => (
                           <button
@@ -468,7 +480,7 @@ const Homepage = () => {
                       <textarea
                         value={moodDescription}
                         onChange={(e) => setMoodDescription(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-purple-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-sm"
+                        className="w-full p-3 rounded-xl border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
                         placeholder="How are you feeling?"
                         rows={3}
                       />
@@ -476,7 +488,7 @@ const Homepage = () => {
                       <button
                         onClick={addMoodEntry}
                         disabled={!selectedMood || !moodDescription.trim()}
-                        className="w-full mt-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white py-2 rounded-xl transition-colors disabled:cursor-not-allowed"
+                        className="w-full mt-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-2 rounded-xl transition-colors disabled:cursor-not-allowed"
                       >
                         Save Mood
                       </button>
@@ -490,12 +502,12 @@ const Homepage = () => {
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <BookOpen className="w-6 h-6 text-green-600" />
+                  <BookOpen className="w-6 h-6 text-blue-600" />
                   <h2 className="text-xl font-bold text-gray-800">Recent Notes</h2>
                 </div>
                 <Link
                   href="/notes"
-                  className="flex items-center gap-2 text-green-600 hover:bg-green-50 px-3 py-2 rounded-xl transition-colors"
+                  className="flex items-center gap-2 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors"
                 >
                   <Eye className="w-4 h-4" />
                   View All
@@ -503,13 +515,13 @@ const Homepage = () => {
               </div>
 
               <div className="space-y-3">
-                <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <h4 className="font-semibold text-gray-800 text-sm mb-1">Project Ideas</h4>
                   <p className="text-gray-600 text-sm">New concepts for the AI summarizer feature...</p>
                   <div className="text-xs text-gray-400 mt-2">2 hours ago</div>
                 </div>
 
-                <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <h4 className="font-semibold text-gray-800 text-sm mb-1">Meeting Notes</h4>
                   <p className="text-gray-600 text-sm">Discussion about marketing strategies...</p>
                   <div className="text-xs text-gray-400 mt-2">1 day ago</div>

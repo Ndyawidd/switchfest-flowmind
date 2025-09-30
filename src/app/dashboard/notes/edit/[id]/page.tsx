@@ -124,7 +124,7 @@ export default function EditNotePage() {
       if (error) {
         console.error('Error fetching note:', error.message);
         alert('Note not found or error loading note.');
-        window.location.href = '/notes';
+        window.location.href = '/dashboard/notes';
       } else {
         setNote(data);
         setTitle(data.title);
@@ -135,7 +135,7 @@ export default function EditNotePage() {
     } catch (error) {
       console.error('Error fetching note:', error);
       alert('Error loading note.');
-      window.location.href = '/notes';
+      window.location.href = '/dashboard/notes';
     } finally {
       setLoading(false);
     }
@@ -287,15 +287,15 @@ export default function EditNotePage() {
   const goBack = () => {
     if (hasChanges) {
       if (confirm('You have unsaved changes. Are you sure you want to go back?')) {
-        window.location.href = '/notes';
+        window.location.href = '/dashboard/notes';
       }
     } else {
-      window.location.href = '/notes';
+      window.location.href = '/dashboard/notes';
     }
   };
 
   const previewNote = () => {
-    window.location.href = `/notes/view/${noteId}`;
+    window.location.href = `/dashboard/notes/view/${noteId}`;
   };
 
   // Auto-resize textarea
@@ -308,7 +308,7 @@ export default function EditNotePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">Loading note...</p>
@@ -319,11 +319,11 @@ export default function EditNotePage() {
 
   if (!note) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Note not found</h2>
           <button
-            onClick={() => window.location.href = '/notes'}
+            onClick={() => window.location.href = '/dashboard/notes'}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition-colors"
           >
             Back to Notes
@@ -334,7 +334,7 @@ export default function EditNotePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100">
       <div className="container mx-auto p-6 max-w-4xl">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl mb-6 border border-white/20">
@@ -425,18 +425,18 @@ export default function EditNotePage() {
           {/* New Audio Player (if recorded) */}
           {newAudioUrl && (
             <div className="px-6 pb-4">
-              <div className="bg-purple-50 p-4 rounded-2xl border border-purple-200">
+              <div className="bg-blue-50 p-4 rounded-2xl border border-blue-200">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-purple-800 flex items-center gap-2">
+                  <h3 className="font-semibold text-blue-800 flex items-center gap-2">
                     <Volume2 className="w-4 h-4" />
                     Voice Input Preview
                   </h3>
                   <button
                     onClick={clearNewRecording}
-                    className="p-2 hover:bg-purple-200 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-200 rounded-xl transition-colors"
                     title="Clear Recording"
                   >
-                    <Trash2 className="w-4 h-4 text-purple-600" />
+                    <Trash2 className="w-4 h-4 text-blue-600" />
                   </button>
                 </div>
                 <audio
@@ -445,7 +445,7 @@ export default function EditNotePage() {
                   controls
                   className="w-full"
                 />
-                <p className="text-sm text-purple-700 mt-2">
+                <p className="text-sm text-blue-700 mt-2">
                   This audio is converted to text and added to your note content.
                 </p>
               </div>
@@ -466,7 +466,7 @@ export default function EditNotePage() {
                         ? 'bg-red-500 hover:bg-red-600 animate-pulse'
                         : isProcessing
                         ? 'bg-yellow-500 animate-pulse cursor-not-allowed'
-                        : 'bg-purple-500 hover:bg-purple-600'
+                        : 'bg-blue-500 hover:bg-blue-600'
                     } text-white`}
                   >
                     {isProcessing ? (
@@ -501,7 +501,7 @@ export default function EditNotePage() {
               <button
                 onClick={saveNote}
                 disabled={saving || (!hasChanges)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
+                className="bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -516,17 +516,6 @@ export default function EditNotePage() {
                 )}
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* Tips Section */}
-        <div className="mt-6 bg-white/60 backdrop-blur-sm p-6 rounded-3xl shadow-lg border border-white/20">
-          <h3 className="font-semibold text-gray-800 mb-3">✏️ Editing Tips:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-            <div>• Use Ctrl+S to save changes quickly</div>
-            <div>• Voice input will append to existing content</div>
-            <div>• Original audio is preserved unless replaced</div>
-            <div>• All changes are tracked and timestamped</div>
           </div>
         </div>
       </div>

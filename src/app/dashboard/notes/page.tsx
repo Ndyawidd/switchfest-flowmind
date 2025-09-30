@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, FileText, Mic, Calendar, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -14,32 +15,34 @@ interface Note {
 }
 
 export default function NotesPage() {
+  const router = useRouter();
   const [notes, setNotes] = useState<Note[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch notes from Supabase
+  // Check auth and fetch notes
   useEffect(() => {
-    fetchNotes();
+    checkAuthAndFetch();
   }, []);
 
-  async function fetchNotes() {
+  async function checkAuthAndFetch() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    fetchNotes(user.id);
+  }
+
+  async function fetchNotes(userId: string) {
     try {
       setLoading(true);
-      
-      // Get current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError || !user) {
-        console.log('User not logged in');
-        setNotes([]);
-        return;
-      }
 
       const { data, error } = await supabase
         .from('notes')
         .select('*')
+        .eq('user_id', userId)
         .order('updated_at', { ascending: false });
 
       if (error) {
@@ -54,23 +57,22 @@ export default function NotesPage() {
     }
   }
 
-  const filteredNotes = notes.filter(note => 
+  const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     note.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddNote = () => {
     setShowAddModal(false);
-    // Redirect to new note page
-    window.location.href = `/notes/new`;
+    window.location.href = `/dashboard/notes/new`;
   };
 
   const handleEditNote = (id: string) => {
-    window.location.href = `/notes/edit/${id}`;
+    window.location.href = `/dashboard/notes/edit/${id}`;
   };
 
   const handleViewNote = (id: string) => {
-    window.location.href = `/notes/view/${id}`;
+    window.location.href = `/dashboard/notes/view/${id}`;
   };
 
   const handleDeleteNote = async (id: string) => {
@@ -99,24 +101,20 @@ export default function NotesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
       <div className="container mx-auto p-6">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full">
-              <FileText className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              My Notes
+        <div className="text-center my-8">
+            <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center mb-5">
+              <span className="text-blue-600">My</span>{' '}
+              <span className="text-gray-900">Notes</span>
             </h1>
-          </div>
-          <p className="text-gray-600 text-lg">Capture your thoughts and ideas</p>
+          
         </div>
 
         {/* Top Bar with Search and Add Button */}
         <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl mb-8 border border-white/20">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -125,14 +123,14 @@ export default function NotesPage() {
                 placeholder="Search notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                className=" w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
               />
             </div>
 
             {/* Add Note Button */}
             <button
               onClick={() => setShowAddModal(true)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Add Note
@@ -154,7 +152,7 @@ export default function NotesPage() {
               <p className="text-gray-500 mb-6">Start capturing your thoughts and ideas!</p>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl items-center gap-2"
               >
                 Create Your First Note
               </button>
@@ -174,7 +172,7 @@ export default function NotesPage() {
                         Text Note
                       </span>
                     </div>
-                    
+
                     {/* Action Buttons */}
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <button
@@ -241,7 +239,7 @@ export default function NotesPage() {
             <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
               Ready to create a new note?
             </h2>
-            
+
             <div className="space-y-4">
               {/* Create Note Button */}
               <button
