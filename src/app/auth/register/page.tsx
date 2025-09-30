@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight, UserPlus } from 'lucide-react';
+import { Mail, Lock, UserPlus } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { supabase } from '@/lib/supabase';
+import { motion } from 'framer-motion';
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -43,35 +44,69 @@ const RegisterPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100 relative font-montserrat">
       <Navbar />
       <div className="min-h-screen flex items-center justify-center p-6">
-
         {/* Background decoration */}
-        <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full opacity-10 blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full opacity-10 blur-3xl"></div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full blur-3xl"
+        ></motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full blur-3xl"
+        ></motion.div>
 
-        <div className="w-full max-w-md relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-md relative z-10"
+        >
           {/* Logo/Brand */}
-          <div className="text-center mb-8">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-center mb-8"
+          >
             <h1 className="text-4xl font-bold text-gray-800 mb-2 font-montserrat-alt">
               Create Your Account
             </h1>
             <p className="text-gray-600">
-              Start your productivity journey with <span className="font-semibold text-blue-600">FlowMind</span>
+              Start your productivity journey with{' '}
+              <span className="font-semibold text-blue-600">FlowMind</span>
             </p>
-          </div>
+          </motion.div>
 
           {/* Register Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8"
+          >
             <form onSubmit={handleRegister}>
               <div className="space-y-6">
                 {error && (
-                  <div className="rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-600 flex items-center gap-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl bg-red-50 border border-red-200 p-4 text-sm text-red-600 flex items-center gap-2"
+                  >
                     <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                     {error}
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Email Input */}
-                <div className="space-y-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="space-y-2"
+                >
                   <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
                     Email
                   </label>
@@ -89,10 +124,15 @@ const RegisterPage = () => {
                       required
                     />
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Password Input */}
-                <div className="space-y-2">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="space-y-2"
+                >
                   <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
                     Password
                   </label>
@@ -110,10 +150,15 @@ const RegisterPage = () => {
                       required
                     />
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Confirm Password Input */}
-                <div className="space-y-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7 }}
+                  className="space-y-2"
+                >
                   <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700">
                     Confirm Password
                   </label>
@@ -131,16 +176,19 @@ const RegisterPage = () => {
                       required
                     />
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Submit Button */}
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="submit"
                   disabled={loading}
-                  className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-white transition-all duration-300 transform shadow-lg ${loading
+                  className={`w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-white transition-all duration-300 transform shadow-lg ${
+                    loading
                       ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:scale-105 hover:shadow-xl'
-                    }`}
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+                  }`}
                 >
                   {loading ? (
                     <>
@@ -153,7 +201,7 @@ const RegisterPage = () => {
                       <UserPlus className="w-5 h-5" />
                     </>
                   )}
-                </button>
+                </motion.button>
               </div>
             </form>
 
@@ -168,7 +216,12 @@ const RegisterPage = () => {
             </div>
 
             {/* Login Link */}
-            <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="text-center"
+            >
               <p className="text-gray-600">
                 Already have an account?{' '}
                 <Link
@@ -178,9 +231,9 @@ const RegisterPage = () => {
                   Login here
                 </Link>
               </p>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

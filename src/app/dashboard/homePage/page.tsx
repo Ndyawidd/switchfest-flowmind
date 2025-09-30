@@ -19,6 +19,7 @@ import {
   Eye,
   Edit3
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Todo {
   id: number;
@@ -239,91 +240,145 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
-  {/* Dashboard Content */}
-  <main className="container mx-auto px-6 py-8">
-    {/* Welcome Section */}
-    <div className="my-8">
-      <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center">
-        <span className="text-blue-600">Good</span>{' '}
-        <span className="text-gray-900">
-          {new Date().getHours() < 12
-            ? 'Morning'
-            : new Date().getHours() < 17
-            ? 'Afternoon'
-            : 'Evening'}!
-        </span>
-      </h1>
-      <h2 className="text-xl md:text-xl font-semibold text-gray-900 mt-4 text-center font-montserrat">
-        Here's what's happening with your productivity today
-      </h2>
-    </div>
+      {/* Dashboard Content */}
+      <main className="container mx-auto px-6 py-8">
+        {/* Welcome Section */}
+        <motion.div
+          className="w-full relative z-10"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+          <div className="my-8">
+            <motion.div
+              className="text-center mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt text-center">
+                <span className="text-blue-600">Good</span>{' '}
+                <span className="text-gray-900">
+                  {new Date().getHours() < 12
+                    ? 'Morning'
+                    : new Date().getHours() < 17
+                      ? 'Afternoon'
+                      : 'Evening'}!
+                </span>
+              </h1></motion.div>
+            <motion.div
+              className="text-center mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            ><h2 className="text-xl md:text-xl font-semibold text-gray-900 mt-4 text-center font-montserrat">
+                Here's what's happening with your productivity today
+              </h2></motion.div>
+          </div>
+        </motion.div>
 
-    {/* Stats Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-10">
-      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-blue-600 text-sm">Today's Tasks</p>
-            <p className="text-2xl font-bold text-blue-900">{totalTodos}</p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-xl">
-            <CheckSquare className="w-6 h-6 text-blue-600" />
-          </div>
+        {/* Stats Cards */}
+         <motion.div
+          className="w-full relative z-10"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 mt-10">
+          <motion.div
+            className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-600 text-sm">Today's Tasks</p>
+                <p className="text-2xl font-bold text-blue-900">{totalTodos}</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <CheckSquare className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-600 text-sm">Completed</p>
+                <p className="text-2xl font-bold text-blue-900">{completedTodos}</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <Target className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-600 text-sm">Progress</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {totalTodos > 0
+                    ? Math.round((completedTodos / totalTodos) * 100)
+                    : 0}%
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-blue-600 text-sm">Today's Mood</p>
+                <p className="text-lg font-semibold text-blue-900">
+                  {todayMood ? todayMood.mood_text : 'Not set'}
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-xl">
+                {todayMood ? (
+                  <span className="text-2xl">{todayMood.mood_emoji}</span>
+                ) : (
+                  <Smile className="w-6 h-6 text-blue-600" />
+                )}
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-
-      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-blue-600 text-sm">Completed</p>
-            <p className="text-2xl font-bold text-blue-900">{completedTodos}</p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-xl">
-            <Target className="w-6 h-6 text-blue-600" />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-blue-600 text-sm">Progress</p>
-            <p className="text-2xl font-bold text-blue-900">
-              {totalTodos > 0
-                ? Math.round((completedTodos / totalTodos) * 100)
-                : 0}%
-            </p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-xl">
-            <TrendingUp className="w-6 h-6 text-blue-600" />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-blue-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-blue-600 text-sm">Today's Mood</p>
-            <p className="text-lg font-semibold text-blue-900">
-              {todayMood ? todayMood.mood_text : 'Not set'}
-            </p>
-          </div>
-          <div className="p-3 bg-blue-100 rounded-xl">
-            {todayMood ? (
-              <span className="text-2xl">{todayMood.mood_emoji}</span>
-            ) : (
-              <Smile className="w-6 h-6 text-blue-600" />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-
+        </motion.div>
 
         {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 0.8 }}
+        >
           {/* Today's Tasks Section */}
-          <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
+          <motion.div
+            className="lg:col-span-2 bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.9 }}
+          >
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <CheckSquare className="w-6 h-6 text-blue-600" />
@@ -349,7 +404,13 @@ const Homepage = () => {
 
             {/* Add Task Form */}
             {showAddTask && (
-              <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-200"
+              >
                 <div className="flex gap-3">
                   <input
                     type="text"
@@ -367,7 +428,7 @@ const Homepage = () => {
                     Add
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Tasks List */}
@@ -380,12 +441,15 @@ const Homepage = () => {
                 </div>
               ) : (
                 todayTodos.slice(0, 6).map(todo => (
-                  <div
+                  <motion.div
                     key={todo.id}
                     className={`flex items-center gap-3 p-4 rounded-xl border transition-all duration-300 ${todo.is_completed
                       ? 'bg-blue-50 border-blue-200'
                       : 'bg-white border-gray-200 hover:border-blue-300'
                       }`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
                   >
                     <input
                       type="checkbox"
@@ -402,7 +466,7 @@ const Homepage = () => {
                         minute: '2-digit'
                       })}
                     </span>
-                  </div>
+                  </motion.div>
                 ))
               )}
 
@@ -417,12 +481,17 @@ const Homepage = () => {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column */}
           <div className="space-y-8">
             {/* Mood Tracker Section */}
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
+            <motion.div
+              className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 1.0 }}
+            >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Heart className="w-6 h-6 text-blue-600" />
@@ -439,7 +508,15 @@ const Homepage = () => {
 
               {todayMood ? (
                 <div className="text-center">
-                  <div className="text-6xl mb-4">{todayMood.mood_emoji}</div>
+                  <motion.div
+                    className="text-6xl mb-4"
+                    key={todayMood.mood_emoji}
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+                  >
+                    {todayMood.mood_emoji}
+                  </motion.div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">{todayMood.mood_text}</h3>
                   <p className="text-gray-600 text-sm mb-4">{todayMood.description}</p>
                   <div className="text-xs text-gray-400">
@@ -460,27 +537,34 @@ const Homepage = () => {
                   </button>
 
                   {showAddMood && (
-                    <div className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-200">
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="mt-4 p-4 bg-blue-50 rounded-2xl border border-blue-200"
+                    >
                       <div className="grid grid-cols-4 gap-2 mb-4">
                         {moods.slice(0, 4).map((mood) => (
-                          <button
+                          <motion.button
                             key={mood.text}
                             onClick={() => setSelectedMood(mood)}
-                            className={`p-3 rounded-xl transition-all ${selectedMood?.text === mood.text
+                            className={`p-3 rounded-xl transition-all text-gray-900 ${selectedMood?.text === mood.text
                               ? 'bg-white shadow-lg scale-105'
                               : 'hover:bg-white hover:shadow-md'
                               }`}
+                            whileTap={{ scale: 0.9 }}
                           >
                             <div className="text-2xl">{mood.emoji}</div>
                             <div className="text-xs mt-1">{mood.text}</div>
-                          </button>
+                          </motion.button>
                         ))}
                       </div>
 
                       <textarea
                         value={moodDescription}
                         onChange={(e) => setMoodDescription(e.target.value)}
-                        className="w-full p-3 rounded-xl border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
+                        className="text-gray-700 w-full p-3 rounded-xl border border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
                         placeholder="How are you feeling?"
                         rows={3}
                       />
@@ -492,14 +576,19 @@ const Homepage = () => {
                       >
                         Save Mood
                       </button>
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Recent Notes Section */}
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
+            <motion.div
+              className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut', delay: 1.1 }}
+            >
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <BookOpen className="w-6 h-6 text-blue-600" />
@@ -527,9 +616,9 @@ const Homepage = () => {
                   <div className="text-xs text-gray-400 mt-2">1 day ago</div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </main>
     </div>
   );

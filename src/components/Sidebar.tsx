@@ -109,7 +109,7 @@ export default function Sidebar({
                     {navItems.map(item => (
                         <Link key={item.name} href={item.path}>
                             <div
-                                className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${pathname === item.path
+                                className={`flex items-center gap-4 mb-3 p-3 rounded-lg transition-colors ${pathname === item.path
                                     ? 'bg-blue-600 text-white shadow-md'
                                     : 'text-blue-700 hover:bg-blue-100'
                                     }`}
