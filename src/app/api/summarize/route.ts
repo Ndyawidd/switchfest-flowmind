@@ -174,12 +174,14 @@ Ringkasan:`;
       }
     });
 
-  } catch (error: any) {
-    console.error('Error summarizing text:', error);
+  } catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error('Error summarizing text:', error.message);
     console.error('Error stack:', error.stack);
-    
-    return NextResponse.json({ 
-      error: `Internal server error: ${error.message}` 
-    }, { status: 500 });
+    return NextResponse.json({ error: `Internal server error: ${error.message}` }, { status: 500 });
+  } else {
+    console.error('Unexpected error:', error);
+    return NextResponse.json({ error: 'Internal server error: Unknown error' }, { status: 500 });
   }
+}
 }

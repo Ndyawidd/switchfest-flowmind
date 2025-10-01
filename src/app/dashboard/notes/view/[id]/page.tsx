@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Edit, Calendar, Clock, FileText } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useParams, useRouter } from 'next/navigation';
 
 interface Note {
   id: string;
@@ -18,48 +19,55 @@ export default function ViewNotePage() {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
-
-  // Get note ID from URL
-  const noteId = typeof window !== 'undefined' ? 
-    window.location.pathname.split('/').pop() || '' : '';
+  const params = useParams(); 
+  const router = useRouter(); 
+  const noteId = params.id as string;
+  // console.log('params:', params); // ← TAMBAHKAN INI
+  // console.log('noteId:', noteId);
 
   useEffect(() => {
+    const fetchNote = async () => {
+      if (!noteId) {
+        alert('Note ID not found');
+        router.push('/dashboard/notes');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('notes')
+          .select('*')
+          .eq('id', noteId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching note:', error.message);
+          alert('Note not found or error loading note.');
+          router.push('/dashboard/notes');
+        } else {
+          setNote(data);
+        }
+      } catch (error) {
+        console.error('Error fetching note:', error);
+        alert('Error loading note.');
+        router.push('/dashboard/notes');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (noteId) {
       fetchNote();
     }
-  }, [noteId]);
-
-  const fetchNote = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .eq('id', noteId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching note:', error.message);
-        alert('Note not found or error loading note.');
-        window.location.href = '/notes';
-      } else {
-        setNote(data);
-      }
-    } catch (error) {
-      console.error('Error fetching note:', error);
-      alert('Error loading note.');
-      window.location.href = '/notes';
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [noteId, router]);
 
   const goBack = () => {
-    window.location.href = '/notes';
+    router.push('/dashboard/notes');
   };
 
   const editNote = () => {
-    window.location.href = `/notes/edit/${noteId}`;
+    router.push(`/dashboard/notes/edit/${noteId}`);
   };
 
   const summarizeNote = async () => {
@@ -107,7 +115,7 @@ export default function ViewNotePage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-700 mb-4">Note not found</h2>
           <button
-            onClick={() => window.location.href = '/notes'}
+            onClick={() => window.location.href = '/dashboard/notes'}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl transition-colors"
           >
             Back to Notes

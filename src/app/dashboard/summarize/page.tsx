@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 
 import { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Upload, FileText, Download, Trash2, Send, File, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Inter, Poppins, Plus_Jakarta_Sans } from 'next/font/google';
+import { Inter, Poppins } from 'next/font/google';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
@@ -143,7 +145,7 @@ export default function SummarizePage() {
           for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
-            const pageText = textContent.items.map((item: any) => item.str).join(' ');
+            const pageText = textContent.items.map((item: { str: string }) => item.str).join(' ');
             fullText += pageText + '\n\n';
             updateProgress(Math.min(100, Math.floor((i / pdf.numPages) * 100)));
           }

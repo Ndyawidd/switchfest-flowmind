@@ -14,8 +14,7 @@ import {
   Trash2,
   Edit3,
   Save,
-  X,
-  ArrowLeft
+  X
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -397,7 +396,7 @@ export default function ToDoListPage() {
                 <Target className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-gray-600 text-sm">Today's Progress</p>
+                <p className="text-gray-600 text-sm">Today&apos;s Progress</p>
                 <p className="text-2xl font-bold text-gray-800">{completedToday}/{totalToday}</p>
               </div>
             </div>

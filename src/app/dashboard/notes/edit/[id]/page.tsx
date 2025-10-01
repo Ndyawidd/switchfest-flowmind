@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Save, Mic, MicOff, FileText, Volume2, Trash2, Eye, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useParams, useRouter } from 'next/navigation';
 
 interface Note {
   id: string;
@@ -20,17 +21,17 @@ interface SpeechRecognition extends EventTarget {
   start(): void;
   stop(): void;
   abort(): void;
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
 }
 
 interface SpeechRecognitionErrorEvent extends Event {
@@ -85,15 +86,60 @@ export default function EditNotePage() {
   const [loading, setLoading] = useState(true);
   const [isSpeechSupported, setIsSpeechSupported] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const params = useParams(); // Tambahkan ini
+  const router = useRouter(); // Tambahkan ini untuk navigasi
+  const noteId = params.id as string; 
   
   const audioRef = useRef<HTMLAudioElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Get note ID from URL
-  const noteId = typeof window !== 'undefined' ? 
-    window.location.pathname.split('/').pop() || '' : '';
+  // const noteId = typeof window !== 'undefined' ? 
+  //   window.location.pathname.split('/').pop() || '' : '';
 
+  // Check for changes
   useEffect(() => {
+    const titleChanged = title !== originalTitle;
+    const contentChanged = content !== originalContent;
+    setHasChanges(titleChanged || contentChanged || audioBlob !== null);
+  }, [title, content, originalTitle, originalContent, audioBlob]);
+
+ useEffect(() => {
+    const fetchNote = async () => {
+      if (!noteId) {
+        alert('Note ID not found');
+        router.push('/dashboard/notes');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('notes')
+          .select('*')
+          .eq('id', noteId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching note:', error.message);
+          alert('Note not found or error loading note.');
+          router.push('/dashboard/notes');
+        } else {
+          setNote(data);
+          setTitle(data.title);
+          setContent(data.content);
+          setOriginalTitle(data.title);
+          setOriginalContent(data.content);
+        }
+      } catch (error) {
+        console.error('Error fetching note:', error);
+        alert('Error loading note.');
+        router.push('/dashboard/notes');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (noteId) {
       fetchNote();
     }
@@ -103,43 +149,7 @@ export default function EditNotePage() {
       setIsSpeechSupported(true);
       initializeSpeechRecognition();
     }
-  }, [noteId]);
-
-  // Check for changes
-  useEffect(() => {
-    const titleChanged = title !== originalTitle;
-    const contentChanged = content !== originalContent;
-    setHasChanges(titleChanged || contentChanged || audioBlob !== null);
-  }, [title, content, originalTitle, originalContent, audioBlob]);
-
-  const fetchNote = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .eq('id', noteId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching note:', error.message);
-        alert('Note not found or error loading note.');
-        window.location.href = '/dashboard/notes';
-      } else {
-        setNote(data);
-        setTitle(data.title);
-        setContent(data.content);
-        setOriginalTitle(data.title);
-        setOriginalContent(data.content);
-      }
-    } catch (error) {
-      console.error('Error fetching note:', error);
-      alert('Error loading note.');
-      window.location.href = '/dashboard/notes';
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [noteId, router]);
 
   const initializeSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -287,15 +297,15 @@ export default function EditNotePage() {
   const goBack = () => {
     if (hasChanges) {
       if (confirm('You have unsaved changes. Are you sure you want to go back?')) {
-        window.location.href = '/dashboard/notes';
+        router.push('/dashboard/notes');
       }
     } else {
-      window.location.href = '/dashboard/notes';
+      router.push('/dashboard/notes');
     }
   };
 
-  const previewNote = () => {
-    window.location.href = `/dashboard/notes/view/${noteId}`;
+   const previewNote = () => {
+    router.push(`/dashboard/notes/view/${noteId}`);
   };
 
   // Auto-resize textarea
@@ -415,7 +425,7 @@ export default function EditNotePage() {
             {/* Interim transcript indicator */}
             {interimTranscript && (
               <div className="text-gray-400 italic text-sm mt-2">
-                Processing: "{interimTranscript}"
+                Processing: &quot;{interimTranscript}&quot;
               </div>
             )}
           </div>

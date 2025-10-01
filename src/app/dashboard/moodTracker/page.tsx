@@ -48,25 +48,26 @@ export default function MoodTrackerPage() {
   const [selectedMood, setSelectedMood] = useState<{ emoji: string; text: string; color: string } | null>(null);
   const [newDescription, setNewDescription] = useState('');
   const [filter, setFilter] = useState<'week' | 'month' | 'year'>('month');
-  const [currentDate, setCurrentDate] = useState(new Date());
+  // const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'summary' | 'calendar'>('summary');
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch data after login check
   useEffect(() => {
+    async function checkAuthAndFetch() {
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/auth/login');
+        return;
+      }
+      await fetchMoodEntries(user.id);
+      setIsLoading(false);
+    }
+
     checkAuthAndFetch();
   }, []);
-
-  async function checkAuthAndFetch() {
-    setIsLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
-    await fetchMoodEntries(user.id);
-    setIsLoading(false);
-  }
 
   async function fetchMoodEntries(userId: string) {
     try {
@@ -132,7 +133,7 @@ export default function MoodTrackerPage() {
 
   // Memoized summary
   const { filteredEntries, groupedByDate } = useMemo(() => {
-    let startDate = new Date();
+    const startDate = new Date();
     if (filter === 'week') startDate.setDate(startDate.getDate() - 7);
     if (filter === 'month') startDate.setMonth(startDate.getMonth() - 1);
     if (filter === 'year') startDate.setFullYear(startDate.getFullYear() - 1);
@@ -246,8 +247,8 @@ export default function MoodTrackerPage() {
                   key={mood.text}
                   onClick={() => setSelectedMood(mood)}
                   className={`group relative overflow-hidden p-4 rounded-2xl transition-all duration-300 transform hover:scale-105 ${selectedMood?.text === mood.text
-                      ? `bg-gradient-to-br ${mood.color} shadow-2xl scale-105`
-                      : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl'
+                    ? `bg-gradient-to-br ${mood.color} shadow-2xl scale-105`
+                    : 'bg-white hover:bg-gray-50 shadow-lg hover:shadow-xl'
                     }`}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -327,8 +328,8 @@ export default function MoodTrackerPage() {
                 <motion.button
                   onClick={() => setViewMode('summary')}
                   className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'summary'
-                      ? 'bg-white shadow-md text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-white shadow-md text-blue-600'
+                    : 'text-gray-600 hover:text-blue-600'
                     }`}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -338,8 +339,8 @@ export default function MoodTrackerPage() {
                 <motion.button
                   onClick={() => setViewMode('calendar')}
                   className={`px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 ${viewMode === 'calendar'
-                      ? 'bg-white shadow-md text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-white shadow-md text-blue-600'
+                    : 'text-gray-600 hover:text-blue-600'
                     }`}
                   whileTap={{ scale: 0.95 }}
                 >

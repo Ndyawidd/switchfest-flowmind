@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, FileText, Mic, Calendar, Search, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, FileText, Calendar, Search, Edit, Trash2, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 
