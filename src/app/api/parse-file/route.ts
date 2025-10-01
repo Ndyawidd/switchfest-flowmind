@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/parse-file/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -27,20 +28,12 @@ export async function POST(req: NextRequest) {
         extractedText = buffer.toString('utf-8');
       }
       
-      // Handle PDF files
+      // Handle PDF files - Disabled on server, use client-side parsing
       else if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
-        console.log('Parsing PDF...');
-        try {
-          // Dynamic import for pdf-parse
-          const pdfParse = (await import('pdf-parse')).default;
-          const pdfData = await pdfParse(buffer);
-          extractedText = pdfData.text;
-        } catch (pdfError) {
-          console.error('PDF parsing error:', pdfError);
-          return NextResponse.json({
-            error: 'Failed to parse PDF. Please make sure the PDF is not password protected and contains extractable text.'
-          }, { status: 500 });
-        }
+        console.log('PDF upload detected - should be parsed on client side');
+        return NextResponse.json({
+          error: 'PDF files are now processed in your browser. Please wait for the file to load automatically.'
+        }, { status: 400 });
       }
       
       // Handle DOC/DOCX files
