@@ -5,25 +5,25 @@ import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Save, Mic, MicOff, FileText, Volume2, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-interface ISpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onaudiostart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onaudioend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onerror: ((this: ISpeechRecognition, ev: SpeechRecognitionErrorEvent) => unknown) | null;
-  onnomatch: ((this: ISpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null;
-  onresult: ((this: ISpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null;
-  onsoundstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onsoundend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onspeechstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onspeechend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-  onstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
-}
+// interface ISpeechRecognition extends EventTarget {
+//   continuous: boolean;
+//   interimResults: boolean;
+//   lang: string;
+//   start(): void;
+//   stop(): void;
+//   abort(): void;
+//   onaudiostart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onaudioend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onerror: ((this: ISpeechRecognition, ev: SpeechRecognitionErrorEvent) => unknown) | null;
+//   onnomatch: ((this: ISpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null;
+//   onresult: ((this: ISpeechRecognition, ev: SpeechRecognitionEvent) => unknown) | null;
+//   onsoundstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onsoundend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onspeechstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onspeechend: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+//   onstart: ((this: ISpeechRecognition, ev: Event) => unknown) | null;
+// }
 
 interface SpeechRecognitionErrorEvent extends Event {
   error: string;
@@ -53,13 +53,13 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-// @ts-ignore - Speech Recognition types conflict
-declare global {
-  interface Window {
-    SpeechRecognition: new () => ISpeechRecognition;
-    webkitSpeechRecognition: new () => ISpeechRecognition;
-  }
-}
+// // @ts-expect-error - Speech Recognition types conflict
+// declare global {
+//   interface Window {
+//     SpeechRecognition: new () => ISpeechRecognition;
+//     webkitSpeechRecognition: new () => ISpeechRecognition;
+//   }
+// }
 
 export default function NewNotePage() {
   const [title, setTitle] = useState('');

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/parse-file/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
