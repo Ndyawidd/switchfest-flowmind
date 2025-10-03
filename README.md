@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlowMind 🧠
 
-## Getting Started
+**Your Digital Companion for a Balanced Mind**
 
-First, run the development server:
+FlowMind is a web app that helps you **track your mood, organize tasks, and record ideas** in a modern and simple interface. With FlowMind, you can be more productive and more mindful of your daily life.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## ✨ Key Features
+
+* 🌈 **Mood Tracker** → Track your daily mood with emojis and descriptions. See your emotional patterns in an interactive calendar view.
+* ✅ **To-Do List** → Easily add, mark complete, and organize tasks by date.
+* 📝 **Smart Notes** → Save quick ideas in text or voice (auto transcription).
+* 📊 **Dashboard Personal** → View a summary of your latest moods, tasks, and notes right from the homepage.
+* 🤖 **Summarize** → Summarize long notes into short ones with the help of AI.
+
+---
+
+## 🛠️ Teknologi
+
+* ⚛️ **Next.js 14** (React 19 + TypeScript)
+* 🎨 **Tailwind CSS** + Framer Motion
+* 🔐 **Supabase** (Database, Auth, Storage)
+* ▲ **Vercel** (Deployment)
+
+---
+
+## 🚀 Instalasi
+
+1. **Clone repo**
+
+   ```bash
+   git clone https://github.com/username/switchfest-flowmind.git
+   cd switchfest-flowmind
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Setup Supabase**
+
+   * Create a new project at [Supabase](https://supabase.com/).
+   * Create table `mood_entries`, `todos`, `notes` (Enable Row Level Security + policies).
+   * Create a `notes_images` bouquet to store images. 
+   * Copy **URL** & **Anon Key** Supabase.
+
+4. **Buat file `.env.local`**
+
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+5. **Jalankan project**
+
+   ```bash
+   npm run dev
+   ```
+
+6. **Akses di browser** → [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📂 Struktur Project
+
+```
+flowmind/
+│── app/             # Next.js App Router
+│   ├── layout.tsx   # Main layout
+│   ├── page.tsx     # Landing page
+│   ├── notes/       # Notes page
+│   ├── toDoList/    # To-do page
+│   ├── moodTracker/ # Mood tracker page
+│   └── summarize/   # Summarize page
+│
+│── components/      # Reusable components (Navbar, Footer, etc)
+│── lib/             # Supabase client & helper
+│── public/          # Static assets (logo, picture)
+│── styles/          # Global styles / Tailwind
+│── README.md        # Project documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🤝 Contribusion
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Contributions are very open 🚀
 
-## Learn More
+1. Fork this repo
+2. Create a new branch (`git checkout -b new-feature`)
+3. Commit the changes (`git commit -m 'Add feature X'`)
+4. Push ke branch (`git push origin new-feature`)
+5. Create a Pull Request
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📜 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+License **MIT** © 2025 - FlowMind
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+⭐️ Don't forget to star this repo if you find it useful!
