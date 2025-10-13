@@ -20,17 +20,17 @@ export default function LandingPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center text-center pt-32 pb-20 px-50">
-        {/* Floating Stats */}
+      <section className="relative flex flex-col items-center text-center pt-28 pb-16 px-6 md:px-12 lg:px-20">
+        {/* Floating Stats Left */}
         <motion.div
-          className="absolute top-40 left-30 space-y-10 lg:space-y-14"
+          className="absolute hidden lg:flex flex-col top-40 left-10 space-y-14"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
           <motion.div
             whileHover={{ scale: 1.1 }}
-            className="bg-white rounded-2xl shadow-xl px-10 py-6 rotate-[-6deg]"
+            className="bg-white rounded-2xl shadow-xl px-8 py-6 rotate-[-6deg]"
           >
             <p className="text-4xl lg:text-5xl font-semibold text-gray-800 font-montserrat-alternates">
               10,000+
@@ -48,8 +48,9 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
 
+        {/* Floating Stats Right */}
         <motion.div
-          className="absolute top-40 right-30 space-y-10 lg:space-y-14"
+          className="absolute hidden lg:flex flex-col top-40 right-10 space-y-14"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
@@ -79,7 +80,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-5xl md:text-8xl font-extrabold font-montserrat-alt"
+          className="text-4xl md:text-6xl lg:text-8xl font-extrabold font-montserrat-alt"
         >
           <span className="text-blue-600">Flow</span>{' '}
           <span className="text-gray-900">Mind</span>
@@ -88,7 +89,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl md:text-3xl font-semibold text-gray-800 mt-4 font-montserrat"
+          className="text-lg md:text-2xl lg:text-3xl font-semibold text-gray-800 mt-4 font-montserrat"
         >
           Organize, Reflect, and Grow
         </motion.h2>
@@ -96,7 +97,7 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="max-w-2xl text-gray-600 mt-4"
+          className="max-w-2xl text-sm md:text-base text-gray-600 mt-4"
         >
           The all-in-one productivity app for notes, tasks, and mood tracking.
           Organize your thoughts, achieve your goals, and maintain your wellbeing
@@ -106,7 +107,7 @@ export default function LandingPage() {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="mt-8 px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition shadow-md"
+          className="mt-8 px-6 md:px-8 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition shadow-md"
         >
           Get Started
         </motion.button>
@@ -116,27 +117,28 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 80 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="mt-12"
+          className="mt-12 w-full flex justify-center"
         >
           <Image
             src="/assets/landing-page1.png"
             alt="FlowMind Character"
             width={900}
             height={900}
-            className="drop-shadow-lg"
+            className="drop-shadow-lg w-72 md:w-[600px] lg:w-[900px] h-auto"
           />
         </motion.div>
       </section>
 
       {/* Feature Highlights */}
-      <section className="relative flex flex-col pb-20 pr-50 pl-30">
+      <section className="relative flex flex-col pb-20 px-6 md:px-20">
         <motion.div
           initial={{ opacity: 0, x: -60 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
+          className="mb-12"
         >
-          <h1 className="text-5xl md:text-6xl font-extrabold font-montserrat-alt">
+          <h1 className="text-4xl md:text-6xl font-extrabold font-montserrat-alt">
             <span className="text-blue-600">Feature</span>{' '}
             <span className="text-gray-900">Highlights</span>
           </h1>
@@ -148,37 +150,62 @@ export default function LandingPage() {
             alt="FlowMind Character"
             width={500}
             height={500}
-            className="drop-shadow-lg"
+            className="w-72 md:w-120 sm:w-96 drop-shadow-lg sm:mx-auto lg:mx-10 md:mx-5"
           />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="-mt-25 relative"
-        >
-          <CardSwap cardDistance={60} verticalDistance={70} delay={5000} pauseOnHover={false}>
-            <Card customClass="backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6">
+        initial={{ opacity: 0, x: 60 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="
+          relative 
+          flex 
+          justify-center 
+          items-center
+          
+          mt-[200px]
+          ml-[0px]
+          mr-[180px]
+          
+          md:mt-[0px]
+          md:ml-[20px]
+          md:-mr-[100px]
+          
+          lg:-mt-[100px]
+          lg:ml-[100px]
+          lg:mr-[200px]
+        "
+      >
+          <div className="gap-6 md:gap-8">
+          <CardSwap
+            cardDistance={60}
+            verticalDistance={70}
+            delay={5000}
+            pauseOnHover={false}
+          >
+            <Card customClass="backdrop-blur-lg bg-blue/30 text-gray-900 shadow-xl flex flex-col items-center justify-center p-6 w-full md:w-60 md:h-10">
               <h3 className="text-xl font-bold mb-2">Summarizer</h3>
-              <p className="text-sm text-white-700">Generate summaries instantly</p>
+              <p className="text-sm text-white-700 text-center">Generate summaries instantly</p>
             </Card>
-            <Card customClass="bg-white/30 backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6">
+            <Card customClass="bg-white/30 backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6 w-full md:w-60 md:h-10">
               <h3 className="text-xl font-bold mb-2">Notes</h3>
-              <p className="text-sm text-white-700">Keep track of your ideas</p>
+              <p className="text-sm text-white-700 text-center">Keep track of your ideas</p>
             </Card>
-            <Card customClass="backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6">
+            <Card customClass="backdrop-blur-lg bg-blue/30 text-gray-900 shadow-xl flex flex-col items-center justify-center p-6 w-full md:w-60 md:h-10">
               <h3 className="text-xl font-bold mb-2">To-Do-List</h3>
-              <p className="text-sm text-white-700">Stay on top of your tasks</p>
+              <p className="text-sm text-white-700 text-center">Stay on top of your tasks</p>
             </Card>
-            <Card customClass="bg-white/30 backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6">
+            <Card customClass="bg-white/30 backdrop-blur-lg text-gray-900 shadow-xl flex flex-col items-center justify-center p-6 w-full md:w-60 md:h-10">
               <h3 className="text-xl font-bold mb-2">Mood Tracker</h3>
-              <p className="text-sm text-white-700">Track your daily emotions</p>
+              <p className="text-sm text-white-700 text-center">Track your daily emotions</p>
             </Card>
           </CardSwap>
+        </div>
         </motion.div>
       </section>
+
 
       {/* Why Choose FlowMind */}
       <section className="relative flex flex-col md:flex-row items-center justify-between gap-12 px-10 md:px-20 py-20 mt-20">
@@ -187,21 +214,22 @@ export default function LandingPage() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="flex flex-col w-full md:w-1/2 text-4xl md:text-3xl"
+          className="flex flex-col w-full md:w-1/2 text-2xl md:text-4xl"
         >
-          <div className="bg-[#0812C3] text-white font-semibold rounded-t-xl px-6 py-4 shadow-lg h-30 flex items-center gap-7">
-            <Lock className="w-8 h-8" />
+          <div className="bg-[#0812C3] text-white font-semibold rounded-t-xl px-4 md:px-10 py-4 shadow-lg h-24 flex items-center gap-4 md:gap-7">
+            <Lock className="w-6 h-6 md:w-8 md:h-8" />
             <span>Secure And Private</span>
           </div>
-          <div className="bg-blue-400 text-white font-semibold px-6 py-4 shadow-lg rounded-md h-30 flex items-center gap-7">
-            <LaptopMinimalCheck className="w-8 h-8" />
+          <div className="bg-blue-400 text-white font-semibold px-4 md:px-10 py-4 shadow-lg rounded-md h-24 flex items-center gap-4 md:gap-7">
+            <LaptopMinimalCheck className="w-6 h-6 md:w-8 md:h-8" />
             <span>Cross-Platform</span>
           </div>
-          <div className="bg-white border border-gray-200 text-[#0812C3] font-semibold px-6 py-4 rounded-b-xl shadow-lg h-30 flex items-center gap-7">
-            <ChartLine className="w-8 h-8" />
+          <div className="bg-white border border-gray-200 text-[#0812C3] font-semibold px-4 md:px-10 py-4 rounded-b-xl shadow-lg h-24 flex items-center gap-4 md:gap-7">
+            <ChartLine className="w-6 h-6 md:w-8 md:h-8" />
             <span>Smart Analytics</span>
           </div>
         </motion.div>
+
 
         <motion.div
           initial={{ opacity: 0, y: 80 }}
